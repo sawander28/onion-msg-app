@@ -10,8 +10,7 @@ IOS_TARGETS := \
 	aarch64-apple-ios-sim \
 	x86_64-apple-ios \
 
-export NDK_HOME=$ANDROID_NDK_HOME
-#//${current_dir}/cache/ndk/android-ndk-r22b/
+export NDK_HOME=${current_dir}/cache/ndk/android-ndk-r22b/
 
 all: release
 release: android ios

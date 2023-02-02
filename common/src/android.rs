@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::run_arti;
+use crate::start_arti_proxy;
 
 use anyhow::Result;
 
@@ -26,7 +26,7 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI(
     // it shouldn't stop Arti from functionning however!
     let _ = init_logger();
 
-    let result = match start_arti_proxy(
+    let _result = match start_arti_proxy(
         &env.get_string(cacheDir)
             .expect("cache_dir is invalid")
             .to_string_lossy(),

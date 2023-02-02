@@ -1,5 +1,4 @@
 use anyhow::Result;
-use futures::{AsyncReadExt, AsyncWriteExt};
 
 use arti::socks::run_socks_proxy;
 use arti_client::{config::TorClientConfigBuilder, TorClient};
@@ -20,8 +19,7 @@ fn start_arti_proxy(cache_dir: &str, state_dir: &str) -> Result<String> {
         run_socks_proxy(runtime, client, 9150).await.expect("could not run socks proxy");
     }).expect("could not spawn");
 
-    let output = env.new_string(format!("arti-native proxy initialized")).expect("Couldn't create java string!");
-    return output.into_inner()
+    Ok("arti-mobile-ex proxy init".to_owned())
 
 }
 

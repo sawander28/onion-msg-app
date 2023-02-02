@@ -1,13 +1,14 @@
 [package]
-name = "arti-mobile"
+name = "arti-mobile-ex"
 version = "0.1.0"
 edition = "2018"
 
 
 [dependencies]
-# use fixed commits because latest release of Arti has broken Android
-arti-client = { version = "0.5", features=["static"], git = "https://gitlab.torproject.org/tpo/core/arti", rev="bb51292fa29aef0502c526215ec55ecbf21e9695" }
-tor-rtcompat = { version = "0.5", git = "https://gitlab.torproject.org/tpo/core/arti", rev="bb51292fa29aef0502c526215ec55ecbf21e9695" }
+arti = { version = "1.1.0", features = ["static", "experimental-api"]}
+arti-client = { version = "0.8.0", features = ["static"]}
+tor-rtcompat = { version = "0.8.0", features = ["static"]}
+
 
 # helpers
 anyhow = "1.0.52"
@@ -35,6 +36,6 @@ libc = "0.2.112"
 
 
 [lib]
-name = "arti_mobile"
+name = "arti_mobile_ex"
 # dylib is for Android, staticlib is for iOS
 crate-type = ["dylib", "staticlib"]
