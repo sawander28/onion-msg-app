@@ -1,0 +1,40 @@
+[package]
+name = "arti-mobile"
+version = "0.1.0"
+edition = "2018"
+
+
+[dependencies]
+# use fixed commits because latest release of Arti has broken Android
+arti-client = { version = "0.5", features=["static"], git = "https://gitlab.torproject.org/tpo/core/arti", rev="bb51292fa29aef0502c526215ec55ecbf21e9695" }
+tor-rtcompat = { version = "0.5", git = "https://gitlab.torproject.org/tpo/core/arti", rev="bb51292fa29aef0502c526215ec55ecbf21e9695" }
+
+# helpers
+anyhow = "1.0.52"
+futures = "0.3.19"
+
+# used to forward logs to system logger
+tracing-subscriber = "0.3.3"
+
+
+# dependancies specific to iOS
+[target.'cfg(target_os = "ios")'.dependencies]
+tracing-oslog = "0.1.2"
+
+
+# dependancies specific to Android
+[target.'cfg(target_os = "android")'.dependencies]
+# the java native interface
+jni = { version = "0.19", default-features = false }
+
+# dependancies to make logs available with logcat
+tracing-android = "0.1.6"
+
+# dependancy to help implementing lockf, for android < 7.0
+libc = "0.2.112"
+
+
+[lib]
+name = "arti_mobile"
+# dylib is for Android, staticlib is for iOS
+crate-type = ["dylib", "staticlib"]
