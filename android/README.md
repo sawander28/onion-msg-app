@@ -14,16 +14,14 @@ dependencies {
 
 Sample use:
 
-//show arti logs into Android logcat
- Arti.initLogging(); 
+	//show arti logs into Android logcat
+	Arti.initLogging(); 
 
-//enable localhost:9150 socks proxy for use with WebView and other proxy capable communication
- ArtiSocksProxy.start(this); 
+	//enable localhost:9150 socks proxy for use with WebView and other proxy capable communication
+	ArtiSocksProxy.start(this); 
 
- //set SOCKS proxy on WebView
-  String proxyHost = "socks://127.0.0.1:9150";
-
-        webViewHelper.setUsingCircumvention("tor");
+ 	//set SOCKS proxy on WebView
+  	String proxyHost = "socks://127.0.0.1:9150";
 
         ProxyConfig proxyConfig = new ProxyConfig.Builder()
                 .addProxyRule(proxyHost) //http proxy for tor
