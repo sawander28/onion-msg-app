@@ -12,7 +12,7 @@ use tracing_subscriber::fmt::Subscriber;
 use tracing_subscriber::prelude::*;
 
 #[no_mangle]
-pub extern "C" fn start_arti(state_dir: *const c_char, cache_dir: *const c_char) -> *mut c_char {
+pub extern "C" fn start_arti_proxy(state_dir: *const c_char, cache_dir: *const c_char) -> *mut c_char {
     let _ = init_logger();
 
     let state_dir = unsafe { CStr::from_ptr(state_dir) }.to_string_lossy();
