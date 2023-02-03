@@ -2,11 +2,9 @@
 
 use crate::start_arti_proxy;
 
-use anyhow::Result;
-
-use std::sync::Once;
 use tracing_subscriber::fmt::Subscriber;
 use tracing_subscriber::prelude::*;
+use tracing::{info};
 
 use jni::objects::{JClass, JString};
 use jni::sys::jstring;
@@ -21,10 +19,6 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI(
                                              cacheDir: JString,
                                              stateDir: JString)
                                              -> jstring {
-
-    // if logger initialization failed, there isn't much we can do, not even log it.
-    // it shouldn't stop Arti from functionning however!
-    let _ = init_logger();
 
     let _result = match start_arti_proxy(
         &env.get_string(cacheDir)
@@ -43,13 +37,18 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI(
 
 }
 
-static LOGGER: Once = Once::new();
+// this is supposed to forward artis built-in logging to logcat
+// https://gitlab.torproject.org/tpo/core/arti/-/blob/main/doc/Android.md#debugging-and-stability
+#[no_mangle]
+pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_initLogging(
+                                             _env: JNIEnv,
+                                             _class: JClass) {
 
-fn init_logger() -> Result<()> {
-    if LOGGER.is_completed() {
-        let layer = tracing_android::layer("rust.arti")?;
-        LOGGER.call_once(|| Subscriber::new().with(layer).init());
-    }
-    Ok(())
+    let layer = tracing_android::layer("rust.arti").expect("couldn't create tracing layer");
+    Subscriber::new()
+        .with(layer)
+        .init(); // this must be called only once, otherwise your app will probably crash
+    info!("arti-android native logging initialized");
 }
+
 
