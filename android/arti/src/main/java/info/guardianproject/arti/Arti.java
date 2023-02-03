@@ -12,7 +12,6 @@ import androidx.webkit.ProxyController;
 import java.io.File;
 
 public class Arti {
-    private static Boolean logInitialized = false;
 
     public final static int SOCKS_PORT = 9150;
 
@@ -37,7 +36,7 @@ public class Arti {
      *
      * default socks5 proxy: localhost:9150
      */
-    public static void start(final File cacheDir, final File stateDir) {
+    public static void startSocksProxy(final File cacheDir, final File stateDir) {
         String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath());
         Log.d("arti-android", "arti result: " + artiResult);
     }
@@ -49,7 +48,7 @@ public class Arti {
         File artiStateDir = new File(context.getFilesDir().getAbsolutePath() + "/arti_state");
         artiStateDir.mkdirs();
 
-        start(artiCacheDir, artiStateDir);
+        startSocksProxy(artiCacheDir, artiStateDir);
 
         return SOCKS_PORT;
     }
@@ -58,7 +57,7 @@ public class Arti {
         String proxyHost = "socks://127.0.0.1:9150";
 
         ProxyConfig proxyConfig = new ProxyConfig.Builder()
-                .addProxyRule(proxyHost) //http proxy for tor
+                .addProxyRule(proxyHost) // proxy for tor
                 .addDirect().build();
         ProxyController.getInstance().setProxyOverride(proxyConfig, command -> {
             //do nothing
