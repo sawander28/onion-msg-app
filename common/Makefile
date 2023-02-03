@@ -10,7 +10,7 @@ IOS_TARGETS := \
 	aarch64-apple-ios-sim \
 	x86_64-apple-ios \
 
-export NDK_HOME=${current_dir}/cache/ndk/android-ndk-r25c/
+export NDK_HOME=${current_dir}/cache/ndk/android-ndk-r22b/
 
 all: release
 release: android ios
@@ -19,10 +19,16 @@ debug: android-debug ios-debug
 android: android-release
 
 android-debug: android-install-deps
-	RUSTFLAGS='-C link-arg=-s' cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build
+	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build
 
 android-release: android-install-deps
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build --release
+
+android-release-arm64: android-install-deps
+	RUSTFLAGS='-C link-arg=-s' cargo ndk -t arm64-v8a -o ./jniLibs build --release
+
+android-release-x86_64: android-install-deps
+	RUSTFLAGS='-C link-arg=-s' cargo ndk -t x86_64 -o ./jniLibs build --release
 
 ios: ios-release
 
@@ -67,16 +73,15 @@ cache/ndk: cache/ndk.zip
 
 cache/ndk.zip:
 ifeq ($(OS),Windows_NT)
-	wget https://dl.google.com/android/repository/android-ndk-r25c-windows.zip -O $@
+	wget https://dl.google.com/android/repository/android-ndk-r22b-windows-x86_64.zip -O $@
 else ifeq ($(shell uname), Linux)
-	wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip -O $@
+	wget https://dl.google.com/android/repository/android-ndk-r22b-linux-x86_64.zip -O $@
 else ifeq ($(shell uname), Darwin)
-	wget https://dl.google.com/android/repository/android-ndk-r25c-darwin.zip -O $@
+	wget https://dl.google.com/android/repository/android-ndk-r22b-darwin-x86_64.zip -O $@
 else
 	@echo "No ndk found for your system, please download it by yourself"
 	@false
 endif
-
 
 cargo-ndk:
 ifeq ($(shell command -v cargo-ndk),)
