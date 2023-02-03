@@ -11,5 +11,5 @@ class ArtiJNI {
 
     static native String startArtiProxyJNI(String cacheDir, String stateDir);
 
-    static native void initLogging();
+   // static native void initLogging();
 }

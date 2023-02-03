@@ -16,6 +16,7 @@ public class Arti {
 
     public final static int SOCKS_PORT = 9150;
 
+    /**
     public static void initLogging() {
         // make sure tracing subscriber is only ever called once
         // otherwise (according to docs) the app will crash without error message.
@@ -28,7 +29,7 @@ public class Arti {
                 Log.d("arti-android", "Arti.initLogging() called, while logging was already initialized");
             }
         }
-    }
+    }**/
 
     /**
      * One shot call. If it works, Arti will be started in proxy mode like staring `arti proxy` in
@@ -67,7 +68,7 @@ public class Arti {
     }
 
     public static void init (Context context) {
-        initLogging();
+    //    initLogging();
         startSocksProxy(context);
         wrapWebView();
     }
