@@ -1,0 +1,25 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+// SPDX-FileCopyrightText: 2022 Michael Pöhn <michael@poehn.at>
+// SPDX-License-Identifier: MIT
+
+plugins {
+    id 'com.android.application' version '7.3.1' apply false
+    id 'com.android.library' version '7.3.1' apply false
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+ext {
+    versionName = "1.1.0.1"
+    LIBRARY_GROUP = "info.guardianproject"
+    LIBRARY_ARTIFACT_ID = "arti-android"
+    LIBRARY_VERSION_NAME = versionName
+    LIBRARY_URL = "https://codeberg.org/uniqx/arti-android"
+    LIBRARY_GIT_URL = "https://codeberg.org/uniqx/arti-android.git"
+    OSS_SIGNING_KEY_ID = "nathan@guardianproject.info"
+    OSS_SIGNING_KEY = "0x123456"
+}
+
