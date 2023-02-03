@@ -13,7 +13,7 @@ task clean(type: Delete) {
 }
 
 ext {
-    versionName = "1.1.0"
+    versionName = "1.1.0.1"
     LIBRARY_GROUP = "info.guardianproject"
     LIBRARY_ARTIFACT_ID = "arti-mobile-ex"
     LIBRARY_VERSION_NAME = versionName
