@@ -10,7 +10,7 @@ IOS_TARGETS := \
 	aarch64-apple-ios-sim \
 	x86_64-apple-ios \
 
-export NDK_HOME=${current_dir}/cache/ndk/android-ndk-r22b/
+export NDK_HOME=${current_dir}/cache/ndk/android-ndk-r25c/
 
 all: release
 release: android ios
@@ -67,11 +67,11 @@ cache/ndk: cache/ndk.zip
 
 cache/ndk.zip:
 ifeq ($(OS),Windows_NT)
-	wget https://dl.google.com/android/repository/android-ndk-r22b-windows-x86_64.zip -O $@
+	wget https://dl.google.com/android/repository/android-ndk-r25c-windows.zip -O $@
 else ifeq ($(shell uname), Linux)
-	wget https://dl.google.com/android/repository/android-ndk-r22b-linux-x86_64.zip -O $@
+	wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip -O $@
 else ifeq ($(shell uname), Darwin)
-	wget https://dl.google.com/android/repository/android-ndk-r22b-darwin-x86_64.zip -O $@
+	wget https://dl.google.com/android/repository/android-ndk-r25c-darwin.zip -O $@
 else
 	@echo "No ndk found for your system, please download it by yourself"
 	@false
