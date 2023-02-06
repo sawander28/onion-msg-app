@@ -8,13 +8,16 @@ ANDROID_TARGETS := \
 IOS_TARGETS := \
 	aarch64-apple-ios \
 	aarch64-apple-ios-sim \
-	x86_64-apple-ios \
+	x86_64-apple-ios
+MACOS_TARGETS := \
+	aarch64-apple-darwin \
+	x86_64-apple-darwin
 
 export NDK_HOME=${current_dir}/cache/ndk/android-ndk-r22b/
 
 all: release
-release: android ios
-debug: android-debug ios-debug
+release: android ios macos
+debug: android-debug ios-debug macos-debug
 
 android: android-release
 
@@ -29,27 +32,35 @@ ios: ios-release
 ios-debug: ios-install-deps arti-mobile.h
 ios-release: ios-install-deps arti-mobile.h
 
+macos: macos-release
+
+macos-debug: macos-install-deps arti-mobile.h
+macos-release: macos-install-deps arti-mobile.h
+
 arti-mobile.h:
-	cbindgen src/ios.rs -l c > arti-mobile.h
+	cbindgen src/apple.rs -l c > arti-mobile.h
 
 # Args:
-# $1: Target name
-# $2: Release mode
-define ios-build-rules
+# $1: OS name
+# $2: Target name
+# $3: Release mode
+define apple-build-rules
 
-ios-$(2)-$(1):
-ifeq ($(2), release)
-	cargo build --target $(1) --release
+$(1)-$(3)-$(2):
+ifeq ($(3), release)
+	cargo build --target $(2) --release
 else
-	cargo build --target $(1)
+	cargo build --target $(2)
 endif
 
-.PHONY: ios-$(2)-$(1)
-ios-$(2): ios-$(2)-$(1)
+.PHONY: $(1)-$(3)-$(2)
+$(1)-$(3): $(1)-$(3)-$(2)
 endef
 
-$(foreach target, $(IOS_TARGETS), $(eval $(call ios-build-rules,$(target),debug)))
-$(foreach target, $(IOS_TARGETS), $(eval $(call ios-build-rules,$(target),release)))
+$(foreach target, $(IOS_TARGETS), $(eval $(call apple-build-rules,ios,$(target),debug)))
+$(foreach target, $(IOS_TARGETS), $(eval $(call apple-build-rules,ios,$(target),release)))
+$(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(target),debug)))
+$(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(target),release)))
 
 clean:
 	cargo clean
@@ -62,10 +73,15 @@ android-install-deps: cache/ndk cargo-ndk android-targets
 
 ios-install-deps: ios-targets cbindgen
 
-cache/ndk: cache/ndk.zip
+macos-install-deps: macos-targets cbindgen
+
+cache/ndk/android-ndk-r22b/README.md: cache/ndk.zip
 	unzip cache/ndk.zip -d $@
+	touch cache/ndk.zip #MacOS' unzip might delete the zip file, so recreate an empty file to calm make.
 
 cache/ndk.zip:
+	mkdir -p cache
+
 ifeq ($(OS),Windows_NT)
 	wget https://dl.google.com/android/repository/android-ndk-r22b-windows-x86_64.zip -O $@
 else ifeq ($(shell uname), Linux)
@@ -73,10 +89,9 @@ else ifeq ($(shell uname), Linux)
 else ifeq ($(shell uname), Darwin)
 	wget https://dl.google.com/android/repository/android-ndk-r22b-darwin-x86_64.zip -O $@
 else
-	@echo "No ndk found for your system, please download it by yourself"
+	@echo "No NDK found for your system, please download it by yourself."
 	@false
 endif
-
 
 cargo-ndk:
 ifeq ($(shell command -v cargo-ndk),)
@@ -103,11 +118,15 @@ $(2)-targets: $(2)-target-$(1)
 endef
 
 android-targets:
-ios-targets:
-
 $(foreach target, $(ANDROID_TARGETS), $(eval $(call target-rules,$(target),android)))
+
+ios-targets:
 $(foreach target, $(IOS_TARGETS), $(eval $(call target-rules,$(target),ios)))
+
+macos-targets:
+$(foreach target, $(MACOS_TARGETS), $(eval $(call target-rules,$(target),macos)))
 
 .PHONY: android-install-deps cargo-ndk android-debug android-release android android-targets
 .PHONY: ios-install-deps cbindgen ios-debug ios-release ios ios-targets
+.PHONY: macos-install-deps macos-debug macos-release macos macos-targets
 .PHONY: all
