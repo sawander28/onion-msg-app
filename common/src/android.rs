@@ -9,38 +9,42 @@ use tracing_subscriber::fmt::Subscriber;
 use tracing_subscriber::prelude::*;
 
 use jni::objects::{JClass, JString};
-use jni::sys::jstring;
+use jni::sys::{jint, jstring};
 use jni::JNIEnv;
 
 /// Create a static method myMethod on class net.example.MyClass
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI(
-                                             env: JNIEnv,
-                                             _class: JClass,
-                                             cacheDir: JString,
-                                             stateDir: JString)
-                                             -> jstring {
-
+    env: JNIEnv,
+    _class: JClass,
+    cacheDir: JString,
+    stateDir: JString,
+    socks_port: jint,
+    dns_port: jint,
+) -> jstring {
     // if logger initialization failed, there isn't much we can do, not even log it.
-    // it shouldn't stop Arti from functionning however!
+    // it shouldn't stop Arti from functioning however!
     let _ = init_logger();
 
-    let _result = match start_arti_proxy(
+    let result = match start_arti_proxy(
         &env.get_string(cacheDir)
             .expect("cache_dir is invalid")
             .to_string_lossy(),
         &env.get_string(stateDir)
             .expect("state_dir is invalid")
             .to_string_lossy(),
+        socks_port as u16,
+        dns_port as u16,
+        move |_buf: &[u8]| {},
     ) {
         Ok(res) => format!("Output: {}", res),
         Err(e) => format!("Error: {}", e),
     };
 
-    let output = env.new_string(format!("arti-native proxy initialized")).expect("Couldn't create java string!");
-    return output.into_inner()
-
+    env.new_string(result)
+        .expect("Couldn't create Java string!")
+        .into_raw()
 }
 
 static LOGGER: Once = Once::new();
@@ -53,7 +57,7 @@ fn init_logger() -> Result<()> {
     Ok(())
 }
 
-/// Android 5.0 to 6.0 misses this function, which prevent Arti from running. This is a translation
+/// Android 5.0 to 6.0 misses this function, which prevents Arti from running. This is a translation
 /// to Rust of Musl implementation. If you don't plan to support anything below Android 7.0, you
 /// should probably not copy this code.
 /// It might be possible to support Android 4.4 and below with the same trick applied to more
