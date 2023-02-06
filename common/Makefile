@@ -21,17 +21,21 @@ debug: android-debug ios-debug macos-debug
 
 android: android-release
 
-android-debug: android-install-deps
+android-debug: android-install-deps info_guardianproject_arti_ArtiJNI.h
 	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build
 
-android-release: android-install-deps
+android-release: android-install-deps info_guardianproject_arti_ArtiJNI.h
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build --release
 
-android-release-arm64: android-install-deps
+android-release-arm64: android-install-deps info_guardianproject_arti_ArtiJNI.h
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t arm64-v8a -o ./jniLibs build --release
 
-android-release-x86_64: android-install-deps
+android-release-x86_64: android-install-deps info_guardianproject_arti_ArtiJNI.h
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t x86_64 -o ./jniLibs build --release
+
+info_guardianproject_arti_ArtiJNI.h:
+	javac -h . ../android/arti/src/main/java/info/guardianproject/arti/ArtiJNI.java
+	rm ../android/arti/src/main/java/info/guardianproject/arti/ArtiJNI.class
 
 ios: ios-release
 
