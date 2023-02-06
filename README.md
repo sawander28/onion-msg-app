@@ -5,6 +5,7 @@ This is a shared project for exposing a standard API for Tor Arti to Android and
 This was based on the following projects:
 - Trinity's https://gitlab.torproject.org/trinity-1686a/arti-mobile-example/
 - Uniq's https://codeberg.org/uniqx/arti-android
+- ahf's https://gitlab.torproject.org/ahf/arti-orbot-ios
 
 ***
 
