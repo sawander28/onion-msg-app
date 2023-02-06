@@ -25,7 +25,13 @@ android-debug: android-install-deps
 	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build
 
 android-release: android-install-deps
-	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build --release
+	RUSTFLAGS='-C link-arg=-s' cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build --release
+
+android-release-arm64: android-install-deps
+	RUSTFLAGS='-C link-arg=-s' cargo ndk -t arm64-v8a -o ./jniLibs build --release
+
+android-release-x86_64: android-install-deps
+	RUSTFLAGS='-C link-arg=-s' cargo ndk -t x86_64 -o ./jniLibs build --release
 
 ios: ios-release
 

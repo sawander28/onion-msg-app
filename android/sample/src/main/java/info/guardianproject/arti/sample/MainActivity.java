@@ -11,11 +11,6 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.File;
-
-import info.guardianproject.arti.ArtiSocksProxy;
-import info.guardianproject.arti.sample.R;
-
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;

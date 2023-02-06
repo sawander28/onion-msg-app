@@ -15,10 +15,10 @@ task clean(type: Delete) {
 ext {
     versionName = "1.1.0.1"
     LIBRARY_GROUP = "info.guardianproject"
-    LIBRARY_ARTIFACT_ID = "arti-android"
+    LIBRARY_ARTIFACT_ID = "arti-mobile-ex"
     LIBRARY_VERSION_NAME = versionName
-    LIBRARY_URL = "https://codeberg.org/uniqx/arti-android"
-    LIBRARY_GIT_URL = "https://codeberg.org/uniqx/arti-android.git"
+    LIBRARY_URL = "https://gitlab.com/guardianproject/arti-mobile-ex"
+    LIBRARY_GIT_URL = "https://gitlab.com/guardianproject/arti-mobile-ex.git"
     OSS_SIGNING_KEY_ID = "nathan@guardianproject.info"
     OSS_SIGNING_KEY = "0x123456"
 }
