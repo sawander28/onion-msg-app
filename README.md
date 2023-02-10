@@ -29,3 +29,10 @@ For more explanations on what it is doing. You should read Arti documentation [f
 - go in the common folder and run `make ios`.
 - take a coffee, or two.
 - open the ios folder in XCode and compile your app as usual.
+
+### Build rust code using vagrant
+
+```
+vagrant up
+vagrant ssh -c "cd /vagrant/common && make android"
+```

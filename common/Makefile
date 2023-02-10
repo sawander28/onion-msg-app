@@ -21,16 +21,16 @@ debug: android-debug ios-debug macos-debug
 
 android: android-release
 
-android-debug: android-install-deps info_guardianproject_arti_ArtiJNI.h
+android-debug: android-install-deps
 	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build
 
-android-release: android-install-deps info_guardianproject_arti_ArtiJNI.h
+android-release: android-install-deps
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build --release
 
-android-release-arm64: android-install-deps info_guardianproject_arti_ArtiJNI.h
+android-release-arm64: android-install-deps
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t arm64-v8a -o ./jniLibs build --release
 
-android-release-x86_64: android-install-deps info_guardianproject_arti_ArtiJNI.h
+android-release-x86_64: android-install-deps
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t x86_64 -o ./jniLibs build --release
 
 info_guardianproject_arti_ArtiJNI.h:
@@ -79,14 +79,14 @@ clean:
 clean-all: clean
 	-rm -fr cache/ndk cache/ndk.zip
 
-android-install-deps: cache/ndk cargo-ndk android-targets
+android-install-deps: cache/ndk/android-ndk-r22b cargo-ndk android-targets
 
 ios-install-deps: ios-targets cbindgen
 
 macos-install-deps: macos-targets cbindgen
 
-cache/ndk/android-ndk-r22b/README.md: cache/ndk.zip
-	unzip cache/ndk.zip -d $@
+cache/ndk/android-ndk-r22b: cache/ndk.zip
+	unzip -n -d cache/ndk cache/ndk.zip
 	touch cache/ndk.zip #MacOS' unzip might delete the zip file, so recreate an empty file to calm make.
 
 cache/ndk.zip:

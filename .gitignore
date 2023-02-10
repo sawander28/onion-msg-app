@@ -2,3 +2,5 @@ cache
 
 # JetBrains IDEs
 .idea
+
+.vagrant
