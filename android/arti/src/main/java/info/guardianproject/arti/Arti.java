@@ -12,6 +12,7 @@ import java.io.File;
 public class Arti {
 
     public final static int SOCKS_PORT = 9150;
+    public final static int DNS_PORT = 9151;
     private static Boolean logInitialized = false;
 
     public static void initLogging() {
@@ -35,7 +36,7 @@ public class Arti {
      * default socks5 proxy: localhost:9150
      */
     public static int startSocksProxy(final File cacheDir, final File stateDir) {
-        String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath(), SOCKS_PORT, 0);
+        String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath(), SOCKS_PORT, DNS_PORT);
         Log.d("arti-android", "arti result: " + artiResult);
 
         return SOCKS_PORT;
