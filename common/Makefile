@@ -34,8 +34,11 @@ android-release-x86_64: android-install-deps
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t x86_64 -o ../android/arti/src/main/jniLibs build --release
 
 info_guardianproject_arti_ArtiJNI.h:
-	javac -h . ../android/arti/src/main/java/info/guardianproject/arti/ArtiJNI.java
-	rm ../android/arti/src/main/java/info/guardianproject/arti/ArtiJNI.class
+	javac \
+		-h . \
+		-classpath ../android/arti/src/main/java/ \
+		../android/arti/src/main/java/info/guardianproject/arti/ArtiJNI.java
+	find ../android/arti/src/main/java -name "*.class" | xargs rm
 
 ios: ios-release
 
