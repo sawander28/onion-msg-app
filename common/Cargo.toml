@@ -30,9 +30,6 @@ tracing-oslog = "0.1.2"
 # the java native interface
 jni = { version = "0.21", default-features = false }
 
-# dependancies to make logs available with logcat
-tracing-android = "0.1.6"
-
 # dependancy to help implementing lockf, for android < 7.0
 libc = "0.2.112"
 

@@ -15,20 +15,6 @@ public class Arti {
     public final static int DNS_PORT = 9151;
     private static Boolean logInitialized = false;
 
-    public static void initLogging() {
-        // make sure tracing subscriber is only ever called once
-        // otherwise (according to docs) the app will crash without error message.
-        synchronized (logInitialized) {
-            if (!logInitialized) {
-                logInitialized = true;
-                Log.d("arti-android", "Arti.initLogging() called for the first time, initializing");
-                ArtiJNI.initLogging();
-            } else {
-                Log.d("arti-android", "Arti.initLogging() called, while logging was already initialized");
-            }
-        }
-    }
-
     /**
      * One shot call. If it works, Arti will be started in proxy mode like staring `arti proxy` in
      * a shell. If it fails there will be no error messages and no way to recover.
@@ -70,7 +56,6 @@ public class Arti {
     }
 
     public static void init(Context context) {
-        initLogging();
         startSocksProxy(context);
         wrapWebView();
     }

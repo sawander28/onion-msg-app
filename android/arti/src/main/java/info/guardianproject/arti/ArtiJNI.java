@@ -7,6 +7,4 @@ class ArtiJNI {
     }
 
     static native String startArtiProxyJNI(String cacheDir, String stateDir, Integer socksPort, Integer dnsPort);
-
-    static native void initLogging();
 }

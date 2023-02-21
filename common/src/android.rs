@@ -2,10 +2,6 @@
 
 use crate::start_arti_proxy;
 
-use tracing::info;
-use tracing_subscriber::fmt::Subscriber;
-use tracing_subscriber::prelude::*;
-
 use jni::objects::{JClass, JString};
 use jni::sys::{jint, jstring};
 use jni::JNIEnv;
@@ -46,16 +42,4 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
     env.new_string(result)
         .expect("Couldn't create Java string!")
         .into_raw()
-}
-
-// this is supposed to forward arti's built-in logging to logcat
-// https://gitlab.torproject.org/tpo/core/arti/-/blob/main/doc/Android.md#debugging-and-stability
-#[no_mangle]
-pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_initLogging<'local>(
-    mut _env: JNIEnv<'local>,
-    _class: JClass<'local>,
-) {
-    let layer = tracing_android::layer("rust.arti").expect("couldn't create tracing layer");
-    Subscriber::new().with(layer).init(); // this must be called only once, otherwise your app will probably crash
-    info!("arti-android native logging initialized");
 }
