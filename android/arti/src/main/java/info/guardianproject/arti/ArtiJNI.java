@@ -6,5 +6,5 @@ class ArtiJNI {
         System.loadLibrary("arti_mobile_ex");
     }
 
-    static native String startArtiProxyJNI(String cacheDir, String stateDir, Integer socksPort, Integer dnsPort);
+    static native String startArtiProxyJNI(String cacheDir, String stateDir, Integer socksPort, Integer dnsPort, ArtiLoggingCallback loggingCallback);
 }

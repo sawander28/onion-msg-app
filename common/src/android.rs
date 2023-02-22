@@ -1,10 +1,11 @@
 #![allow(non_snake_case)]
 
 use crate::start_arti_proxy;
+use std::sync::Arc;
 
-use jni::objects::{JClass, JString};
+use jni::objects::{AutoLocal, JClass, JObject, JString, JValue};
 use jni::sys::{jint, jstring};
-use jni::JNIEnv;
+use jni::{Executor, JNIEnv};
 
 /// Create a static method myMethod on class net.example.MyClass
 #[no_mangle]
@@ -16,6 +17,7 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
     stateDir: JString<'local>,
     socks_port: jint,
     dns_port: jint,
+    loggingCallback: JObject<'local>,
 ) -> jstring {
     let cacheDir: String = env
         .get_string(&cacheDir)
@@ -28,12 +30,31 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
         .to_string_lossy()
         .into_owned();
 
+    let log_cb_ref = env
+        .new_global_ref(loggingCallback)
+        .expect("couldn't create global ref to log callback");
+    let exec = Executor::new(Arc::new(env.get_java_vm().expect("could get jvm ref from env")));
+
     let result = match start_arti_proxy(
         &cacheDir,
         &stateDir,
         socks_port as u16,
         dns_port as u16,
-        move |_buf: &[u8]| {},
+        move |buf: &[u8]| {
+            let msg =
+                std::str::from_utf8(buf).expect("couldn't convert buffered log message to str");
+            exec.with_attached(|env| -> Result<(), jni::errors::Error> {
+                let jmsg: AutoLocal<JObject> =
+                    env.auto_local(env.new_string(msg).expect("couldn't convert log message to jstring").into());
+                env.call_method(
+                    &log_cb_ref,
+                    "log",
+                    "(Ljava/lang/String;)V",
+                    &[JValue::from(&jmsg)],
+                ).expect("calling log callback method failed");
+                Ok(())
+            }).expect("attaching to Executor failed: log callback");
+        },
     ) {
         Ok(res) => format!("Output: {}", res),
         Err(e) => format!("Error: {}", e),

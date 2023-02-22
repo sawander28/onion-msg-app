@@ -22,7 +22,8 @@ public class Arti {
      * default socks5 proxy: localhost:9150
      */
     public static int startSocksProxy(final File cacheDir, final File stateDir) {
-        String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath(), SOCKS_PORT, DNS_PORT);
+        String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath(), SOCKS_PORT, DNS_PORT,
+                logLine -> Log.d("arti.native", logLine));
         Log.d("arti-android", "arti result: " + artiResult);
 
         return SOCKS_PORT;
@@ -46,7 +47,6 @@ public class Arti {
             ProxyConfig proxyConfig = new ProxyConfig.Builder()
                     .addProxyRule(proxyHost) // proxy for tor
                     .addDirect().build();
-
             ProxyController.getInstance().setProxyOverride(proxyConfig, command -> {
                 //do nothing
             }, () -> {
