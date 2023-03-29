@@ -12,21 +12,8 @@ import java.io.File;
 public class Arti {
 
     public final static int SOCKS_PORT = 9150;
+    public final static int DNS_PORT = 9151;
     private static Boolean logInitialized = false;
-
-    public static void initLogging() {
-        // make sure tracing subscriber is only ever called once
-        // otherwise (according to docs) the app will crash without error message.
-        synchronized (logInitialized) {
-            if (!logInitialized) {
-                logInitialized = true;
-                Log.d("arti-android", "Arti.initLogging() called for the first time, initializing");
-                ArtiJNI.initLogging();
-            } else {
-                Log.d("arti-android", "Arti.initLogging() called, while logging was already initialized");
-            }
-        }
-    }
 
     /**
      * One shot call. If it works, Arti will be started in proxy mode like staring `arti proxy` in
@@ -35,7 +22,8 @@ public class Arti {
      * default socks5 proxy: localhost:9150
      */
     public static int startSocksProxy(final File cacheDir, final File stateDir) {
-        String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath(), SOCKS_PORT, 0);
+        String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath(), SOCKS_PORT, DNS_PORT,
+                logLine -> Log.d("arti.native", logLine));
         Log.d("arti-android", "arti result: " + artiResult);
 
         return SOCKS_PORT;
@@ -59,7 +47,6 @@ public class Arti {
             ProxyConfig proxyConfig = new ProxyConfig.Builder()
                     .addProxyRule(proxyHost) // proxy for tor
                     .addDirect().build();
-
             ProxyController.getInstance().setProxyOverride(proxyConfig, command -> {
                 //do nothing
             }, () -> {
@@ -69,7 +56,6 @@ public class Arti {
     }
 
     public static void init(Context context) {
-        initLogging();
         startSocksProxy(context);
         wrapWebView();
     }

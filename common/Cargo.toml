@@ -28,10 +28,7 @@ tracing-oslog = "0.1.2"
 # dependancies specific to Android
 [target.'cfg(target_os = "android")'.dependencies]
 # the java native interface
-jni = { version = "0.20", default-features = false }
-
-# dependancies to make logs available with logcat
-tracing-android = "0.1.6"
+jni = { version = "0.21", default-features = false }
 
 # dependancy to help implementing lockf, for android < 7.0
 libc = "0.2.112"

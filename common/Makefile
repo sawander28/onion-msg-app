@@ -22,20 +22,23 @@ debug: android-debug ios-debug macos-debug
 android: android-release
 
 android-debug: android-install-deps
-	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build
+	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ../android/arti/src/main/jniLibs build
 
 android-release: android-install-deps
-	RUSTFLAGS='-C link-arg=-s' cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ./jniLibs build --release
+	RUSTFLAGS='-C link-arg=-s' cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ../android/arti/src/main/jniLibs build --release
 
 android-release-arm64: android-install-deps
-	RUSTFLAGS='-C link-arg=-s' cargo ndk -t arm64-v8a -o ./jniLibs build --release
+	RUSTFLAGS='-C link-arg=-s' cargo ndk -t arm64-v8a -o ../android/arti/src/main/jniLibs build --release
 
 android-release-x86_64: android-install-deps
-	RUSTFLAGS='-C link-arg=-s' cargo ndk -t x86_64 -o ./jniLibs build --release
+	RUSTFLAGS='-C link-arg=-s' cargo ndk -t x86_64 -o ../android/arti/src/main/jniLibs build --release
 
 info_guardianproject_arti_ArtiJNI.h:
-	javac -h . ../android/arti/src/main/java/info/guardianproject/arti/ArtiJNI.java
-	rm ../android/arti/src/main/java/info/guardianproject/arti/ArtiJNI.class
+	javac \
+		-h . \
+		-classpath ../android/arti/src/main/java/ \
+		../android/arti/src/main/java/info/guardianproject/arti/ArtiJNI.java
+	find ../android/arti/src/main/java -name "*.class" | xargs rm
 
 ios: ios-release
 
@@ -74,7 +77,7 @@ $(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(targ
 
 clean:
 	cargo clean
-	-rm -r ./jniLibs
+	-rm -r ../android/arti/src/main/jniLibs
 
 clean-all: clean
 	-rm -fr cache/ndk cache/ndk.zip
