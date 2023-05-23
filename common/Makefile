@@ -12,6 +12,7 @@ IOS_TARGETS := \
 MACOS_TARGETS := \
 	aarch64-apple-darwin \
 	x86_64-apple-darwin
+FILENAME := libarti_mobile_ex.a
 
 export NDK_HOME=${current_dir}/cache/ndk/android-ndk-r22b/
 
@@ -42,20 +43,20 @@ info_guardianproject_arti_ArtiJNI.h:
 
 ios: ios-release
 
-ios-debug: ios-install-deps arti-mobile.h
-ios-release: ios-install-deps arti-mobile.h
+ios-debug: ios-install-deps arti-mobile.h lipo-ios-debug ios-debug-aarch64-apple-ios
+ios-release: ios-install-deps arti-mobile.h ios-release-aarch64-apple-ios #Simulator is never released, so don't build these targets.
 
 macos: macos-release
 
-macos-debug: macos-install-deps arti-mobile.h
-macos-release: macos-install-deps arti-mobile.h
+macos-debug: macos-install-deps arti-mobile.h lipo-macos-debug
+macos-release: macos-install-deps arti-mobile.h lipo-macos-release
 
 arti-mobile.h:
 	cbindgen src/apple.rs -l c > arti-mobile.h
 
 # Args:
 # $1: OS name
-# $2: Target name
+# $2: Rust target name
 # $3: Release mode
 define apple-build-rules
 
@@ -67,7 +68,6 @@ else
 endif
 
 .PHONY: $(1)-$(3)-$(2)
-$(1)-$(3): $(1)-$(3)-$(2)
 endef
 
 $(foreach target, $(IOS_TARGETS), $(eval $(call apple-build-rules,ios,$(target),debug)))
@@ -77,10 +77,10 @@ $(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(targ
 
 clean:
 	cargo clean
-	-rm -r ../android/arti/src/main/jniLibs
+	-rm -rf ../android/arti/src/main/jniLibs
 
 clean-all: clean
-	-rm -fr cache/ndk cache/ndk.zip
+	-rm -rf cache/ndk cache/ndk.zip
 
 android-install-deps: cache/ndk/android-ndk-r22b cargo-ndk android-targets
 
@@ -138,6 +138,27 @@ $(foreach target, $(IOS_TARGETS), $(eval $(call target-rules,$(target),ios)))
 
 macos-targets:
 $(foreach target, $(MACOS_TARGETS), $(eval $(call target-rules,$(target),macos)))
+
+# Args:
+# $1: OS name
+# $2: Release mode
+# $3: Rust target name 1
+# $4: Rust target name 2
+define lipo-rules
+
+lipo-$(1)-$(2): $(1)-$(2)-$(3) $(1)-$(2)-$(4)
+ifeq (,$(wildcard target/universal-$(1)/$(2)/$(FILENAME)))
+	mkdir -p target/universal-$(1)/$(2)
+	lipo target/$(3)/$(2)/$(FILENAME) target/$(4)/$(2)/$(FILENAME) -create -output target/universal-$(1)/$(2)/$(FILENAME)
+endif
+
+.PHONY: lipo-$(1)-$(2)
+
+endef
+
+$(eval $(call lipo-rules,macos,debug,$(word 1,$(MACOS_TARGETS)),$(word 2,$(MACOS_TARGETS))))
+$(eval $(call lipo-rules,macos,release,$(word 1,$(MACOS_TARGETS)),$(word 2,$(MACOS_TARGETS))))
+$(eval $(call lipo-rules,ios,debug,$(word 2,$(IOS_TARGETS)),$(word 3,$(IOS_TARGETS))))
 
 .PHONY: android-install-deps cargo-ndk android-debug android-release android android-targets
 .PHONY: ios-install-deps cbindgen ios-debug ios-release ios ios-targets
