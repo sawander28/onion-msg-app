@@ -43,13 +43,13 @@ info_guardianproject_arti_ArtiJNI.h:
 
 ios: ios-release
 
-ios-debug: ios-install-deps arti-mobile.h lipo-ios-debug ios-debug-aarch64-apple-ios
-ios-release: ios-install-deps arti-mobile.h ios-release-aarch64-apple-ios #Simulator is never released, so don't build these targets.
+ios-debug: lipo-ios-debug ios-debug-aarch64-apple-ios
+ios-release: ios-release-aarch64-apple-ios #Simulator is never released, so don't build these targets.
 
 macos: macos-release
 
-macos-debug: macos-install-deps arti-mobile.h lipo-macos-debug
-macos-release: macos-install-deps arti-mobile.h lipo-macos-release
+macos-debug: lipo-macos-debug
+macos-release: lipo-macos-release
 
 arti-mobile.h:
 	cbindgen src/apple.rs -l c > arti-mobile.h
@@ -60,7 +60,7 @@ arti-mobile.h:
 # $3: Release mode
 define apple-build-rules
 
-$(1)-$(3)-$(2):
+$(1)-$(3)-$(2): $(1)-install-deps arti-mobile.h
 ifeq ($(3), release)
 	cargo build --target $(2) --release
 else
@@ -117,12 +117,12 @@ ifeq ($(shell command -v cbindgen),)
 endif
 
 # Args:
-# $1: Target name
-# $2: Target operating system
+# $1: Rust target name
+# $2: OS name
 define target-rules
 
 $(2)-target-$(1):
-ifeq ($$(findstring $(1), $$(rust-installed-targets)),)
+ifeq ($$(filter $(1), $$(rust-installed-targets)),)
 	rustup target install $(1)
 endif
 .PHONY: $(2)-target-$(1)
