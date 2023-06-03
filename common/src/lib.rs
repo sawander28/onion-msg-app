@@ -5,8 +5,9 @@ use std::thread;
 
 use arti::{run, ArtiConfig};
 use arti_client::config::TorClientConfigBuilder;
-use tor_config::ConfigurationSources;
+use tor_config::{ConfigurationSources, CfgPath};
 use tor_rtcompat::{BlockOn, PreferredRuntime};
+use arti_client::config::pt::ManagedTransportConfigBuilder;
 
 use tracing_subscriber::fmt::{Layer, Subscriber};
 use tracing_subscriber::layer::SubscriberExt;
@@ -15,6 +16,8 @@ use tracing_subscriber::util::SubscriberInitExt;
 fn start_arti_proxy<F>(
     cache_dir: &str,
     state_dir: &str,
+    obfs4proxy_path: Option<&str>,
+    bridge_line: Option<&str>,
     socks_port: u16,
     dns_port: u16,
     log_fn: F,
@@ -29,9 +32,20 @@ where
     let runtime = PreferredRuntime::create().expect("Could not create Tor runtime.");
     let config_sources = ConfigurationSources::default();
     let arti_config = ArtiConfig::default();
-    let client_config = TorClientConfigBuilder::from_directories(state_dir, cache_dir)
-        .build()
-        .expect("Could not build Tor config.");
+    let mut client_config_builder = TorClientConfigBuilder::from_directories(state_dir, cache_dir);
+
+    if let Some(o4p) = obfs4proxy_path {
+        let mut transport = ManagedTransportConfigBuilder::default();
+        transport
+            .protocols(vec!["obfs4".parse().unwrap()])
+            .path(CfgPath::new(o4p.into()))
+            .run_on_startup(true);
+        client_config_builder.bridges().transports().push(transport);
+    }
+    if let Some(l) = bridge_line {
+        client_config_builder.bridges().bridges().push(l.parse().unwrap());
+    }
+
 
     thread::spawn(move || {
         runtime
@@ -42,7 +56,7 @@ where
                 dns_port,
                 config_sources,
                 arti_config,
-                client_config,
+                client_config_builder.build().unwrap(),
             ))
             .expect("Could not start Arti.");
     });

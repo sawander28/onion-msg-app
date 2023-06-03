@@ -19,6 +19,8 @@ pub extern "C" fn start_arti(
     let result = match start_arti_proxy(
         &cache_dir,
         &state_dir,
+        None,
+        None,
         socks_port as u16,
         dns_port as u16,
         move |buf: &[u8]| {
