@@ -28,14 +28,18 @@ public class Arti {
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored", "UnusedReturnValue"})
-    public static int startSocksProxy(Context context) {
+    public static int startSocksProxy(Context context, String obfs4path, String bridgeLine) {
         File artiCacheDir = new File(context.getCacheDir().getAbsolutePath() + "/arti_cache");
         artiCacheDir.mkdirs();
 
         File artiStateDir = new File(context.getFilesDir().getAbsolutePath() + "/arti_state");
         artiStateDir.mkdirs();
 
-        return startSocksProxy(artiCacheDir, artiStateDir, null, null);
+        return startSocksProxy(artiCacheDir, artiStateDir, obfs4path, bridgeLine);
+    }
+
+    public static int startSocksProxy(Context context) {
+        return startSocksProxy(context, null, null);
     }
 
     public static void wrapWebView() {
