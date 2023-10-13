@@ -13,7 +13,6 @@ public class Arti {
 
     public final static int SOCKS_PORT = 9150;
     public final static int DNS_PORT = 9151;
-    private static Boolean logInitialized = false;
 
     /**
      * One shot call. If it works, Arti will be started in proxy mode like staring `arti proxy` in
@@ -21,23 +20,26 @@ public class Arti {
      * <p>
      * default socks5 proxy: localhost:9150
      */
-    public static int startSocksProxy(final File cacheDir, final File stateDir) {
-        String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath(), SOCKS_PORT, DNS_PORT,
-                logLine -> Log.d("arti.native", logLine));
+    public static int startSocksProxy(final File cacheDir, final File stateDir, String obfs4proxyPath, String bridgeLine) {
+        String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath(), obfs4proxyPath, bridgeLine, SOCKS_PORT, DNS_PORT, logLine -> Log.d("arti.native", logLine));
         Log.d("arti-android", "arti result: " + artiResult);
 
         return SOCKS_PORT;
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored", "UnusedReturnValue"})
-    public static int startSocksProxy(Context context) {
+    public static int startSocksProxy(Context context, String obfs4path, String bridgeLine) {
         File artiCacheDir = new File(context.getCacheDir().getAbsolutePath() + "/arti_cache");
         artiCacheDir.mkdirs();
 
         File artiStateDir = new File(context.getFilesDir().getAbsolutePath() + "/arti_state");
         artiStateDir.mkdirs();
 
-        return startSocksProxy(artiCacheDir, artiStateDir);
+        return startSocksProxy(artiCacheDir, artiStateDir, obfs4path, bridgeLine);
+    }
+
+    public static int startSocksProxy(Context context) {
+        return startSocksProxy(context, null, null);
     }
 
     public static void wrapWebView() {

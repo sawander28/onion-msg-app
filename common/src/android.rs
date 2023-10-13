@@ -15,6 +15,8 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
     _class: JClass<'local>,
     cacheDir: JString<'local>,
     stateDir: JString<'local>,
+    obfs4proxyPath: JString<'local>,
+    bridgeLine: JString<'local>,
     socks_port: jint,
     dns_port: jint,
     loggingCallback: JObject<'local>,
@@ -29,6 +31,14 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
         .expect("state_dir is invalid")
         .to_string_lossy()
         .into_owned();
+    let obfs4proxyPath: Option<String> = match env.get_string(&obfs4proxyPath) {
+        Ok(v) => Some(v.to_string_lossy().into_owned()),
+        Err(_) => None,
+    };
+    let bridgeLine: Option<String> = match env.get_string(&bridgeLine) {
+        Ok(v) => Some(v.to_string_lossy().into_owned()),
+        Err(_) => None,
+    };
 
     let log_cb_ref = env
         .new_global_ref(loggingCallback)
@@ -38,6 +48,8 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
     let result = match start_arti_proxy(
         &cacheDir,
         &stateDir,
+        obfs4proxyPath.as_deref(),
+        bridgeLine.as_deref(),
         socks_port as u16,
         dns_port as u16,
         move |buf: &[u8]| {

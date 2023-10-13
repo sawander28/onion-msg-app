@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2022 Michael Pöhn <michael@poehn.at>
 // SPDX-License-Identifier: MIT
 
-package info.guardianproject.arti.sample;
+package info.guardianproject.sample.arti;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
