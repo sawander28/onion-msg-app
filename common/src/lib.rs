@@ -5,7 +5,7 @@ use std::thread;
 
 use arti::{run, ArtiConfig};
 use arti_client::config::TorClientConfigBuilder;
-use tor_config::{ConfigurationSources, CfgPath};
+use tor_config::{ConfigurationSources, CfgPath, Listen};
 use tor_rtcompat::{BlockOn, PreferredRuntime};
 use arti_client::config::pt::ManagedTransportConfigBuilder;
 
@@ -47,13 +47,16 @@ where
     }
 
 
+    let socks_listen = Listen::new_localhost(socks_port);
+    let dns_listen = Listen::new_localhost(dns_port);
+
     thread::spawn(move || {
         runtime
             .clone()
             .block_on(run(
                 runtime,
-                socks_port,
-                dns_port,
+                socks_listen,
+                dns_listen,
                 config_sources,
                 arti_config,
                 client_config_builder.build().unwrap(),

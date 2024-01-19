@@ -1,23 +1,23 @@
 [package]
 name = "arti-mobile-ex"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2018"
 
 
 [dependencies]
-arti = { version = "1.1.7", features = ["static", "experimental-api"]}
-arti-client = { version = "0.10.0", features = ["static"]}
-tor-config = { version = "0.9.3" }
-tor-rtcompat = { version = "0.9.3", features = ["static"]}
+arti = { version = "1.1.12", features = ["static", "experimental-api"]}
+arti-client = { version = "0.13.0", features = ["static"]}
+tor-config = { version = "0.10.0" }
+tor-rtcompat = { version = "0.9.7", features = ["static"]}
 
 
 # helpers
-anyhow = "1.0.52"
+anyhow = "1.0.79"
 
 # used to forward logs to system logger
-tracing-subscriber = "0.3.6"
-tracing = "0.1.18"
-tracing-appender = "0.2.0"
+tracing-subscriber = "0.3.18"
+tracing = "0.1.40"
+tracing-appender = "0.2.3"
 
 
 # dependancies specific to iOS
