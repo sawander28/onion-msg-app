@@ -87,6 +87,7 @@ $(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(targ
 
 clean:
 	cargo clean
+	rm arti-mobile.h
 	-rm -rf ../android/arti/src/main/jniLibs
 
 clean-all: clean
