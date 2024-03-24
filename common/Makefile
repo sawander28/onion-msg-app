@@ -14,7 +14,7 @@ MACOS_TARGETS := \
 	x86_64-apple-darwin
 FILENAME := libarti_mobile_ex.a
 
-export NDK_HOME=${current_dir}/cache/ndk/android-ndk-r22b/
+export NDK_HOME=${current_dir}/cache/ndk/android-ndk-r23c/
 
 all: release
 release: android ios macos
@@ -83,27 +83,27 @@ clean:
 	-rm -rf ../android/arti/src/main/jniLibs
 
 clean-all: clean
-	-rm -rf cache/ndk cache/ndk.zip
+	-rm -rf cache/ndk cache/ndk.zip cache/android-ndk-r23c.zip
 
-android-install-deps: cache/ndk/android-ndk-r22b cargo-ndk android-targets
+android-install-deps: cache/ndk/android-ndk-r23c cargo-ndk android-targets
 
 ios-install-deps: ios-targets cbindgen
 
 macos-install-deps: macos-targets cbindgen
 
-cache/ndk/android-ndk-r22b: cache/ndk.zip
-	unzip -n -d cache/ndk cache/ndk.zip
-	touch cache/ndk.zip #MacOS' unzip might delete the zip file, so recreate an empty file to calm make.
+cache/ndk/android-ndk-r23c: cache/android-ndk-r23c.zip
+	unzip -n -d cache/ndk cache/android-ndk-r23c.zip
+	touch cache/android-ndk-r23c.zip #MacOS' unzip might delete the zip file, so recreate an empty file to calm make.
 
-cache/ndk.zip:
+cache/android-ndk-r23c.zip:
 	mkdir -p cache
 
 ifeq ($(OS),Windows_NT)
-	wget https://dl.google.com/android/repository/android-ndk-r22b-windows-x86_64.zip -O $@
+	wget https://dl.google.com/android/repository/android-ndk-r23c-windows.zip -O $@
 else ifeq ($(shell uname), Linux)
-	wget https://dl.google.com/android/repository/android-ndk-r22b-linux-x86_64.zip -O $@
+	wget https://dl.google.com/android/repository/android-ndk-r23c-linux.zip -O $@
 else ifeq ($(shell uname), Darwin)
-	wget https://dl.google.com/android/repository/android-ndk-r22b-darwin-x86_64.zip -O $@
+	wget https://dl.google.com/android/repository/android-ndk-r23c-darwin.zip -O $@
 else
 	@echo "No NDK found for your system, please download it by yourself."
 	@false
