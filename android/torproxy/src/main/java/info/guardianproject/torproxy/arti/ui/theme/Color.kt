@@ -1,4 +1,4 @@
-package org.torproject.torservices.arti.ui.theme
+package info.guardianproject.torproxy.arti.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

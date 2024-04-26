@@ -1,8 +1,8 @@
-package org.torproject.torservices.arti.state
+package info.guardianproject.torproxy.arti.state
 
 import android.content.Context
 
-class ArtiServicesPreferences(context: Context) : IArtiServicesPreferences{
+class ArtiServicesPreferences(context: Context) : IArtiServicesPreferences {
 
     companion object {
         private const val ENABLED_KEY = "enabled";

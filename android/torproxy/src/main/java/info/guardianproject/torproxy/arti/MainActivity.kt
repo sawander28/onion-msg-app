@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package org.torproject.torservices.arti
+package info.guardianproject.torproxy.arti
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -36,9 +36,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import info.guardianproject.artiservice.ArtiService
-import org.torproject.torservices.arti.state.IArtiServicesPreferences
-import org.torproject.torservices.arti.state.ArtiServicesPreferences
-import org.torproject.torservices.arti.ui.theme.ArtiandroidTheme
+import info.guardianproject.torproxy.arti.state.IArtiServicesPreferences
+import info.guardianproject.torproxy.arti.state.ArtiServicesPreferences
+import info.guardianproject.torproxy.arti.ui.theme.ArtiandroidTheme
+import info.guardianproject.torproxy.arti.BuildConfig
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

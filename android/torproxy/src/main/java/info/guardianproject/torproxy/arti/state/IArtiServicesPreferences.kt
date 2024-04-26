@@ -1,4 +1,4 @@
-package org.torproject.torservices.arti.state
+package info.guardianproject.torproxy.arti.state
 
 interface IArtiServicesPreferences {
     fun isEnabled(): Boolean

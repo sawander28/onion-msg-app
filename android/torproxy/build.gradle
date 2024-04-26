@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'org.torproject.torservices.arti'
+    namespace 'info.guardianproject.torproxy.arti'
     compileSdk 34
 
     defaultConfig {
-        applicationId "org.torproject.torservices.arti"
+        applicationId "info.guardianproject.torproxy.arti"
         minSdk 21
         targetSdk 34
         versionCode 10000

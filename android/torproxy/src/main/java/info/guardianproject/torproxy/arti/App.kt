@@ -1,4 +1,4 @@
-package org.torproject.torservices.arti
+package info.guardianproject.torproxy.arti
 
 import android.app.Application
 import android.util.Log
