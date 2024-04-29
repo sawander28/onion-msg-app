@@ -1,13 +1,13 @@
 use anyhow::Result;
+use arti_client::config::pt::TransportConfigBuilder;
 use std::sync::Arc;
 
 use std::thread;
 
 use arti::{run, ArtiConfig};
 use arti_client::config::TorClientConfigBuilder;
-use tor_config::{ConfigurationSources, CfgPath};
+use tor_config::{CfgPath, ConfigurationSources, Listen};
 use tor_rtcompat::{BlockOn, PreferredRuntime};
-use arti_client::config::pt::ManagedTransportConfigBuilder;
 
 use tracing_subscriber::fmt::{Layer, Subscriber};
 use tracing_subscriber::layer::SubscriberExt;
@@ -35,7 +35,7 @@ where
     let mut client_config_builder = TorClientConfigBuilder::from_directories(state_dir, cache_dir);
 
     if let Some(o4p) = obfs4proxy_path {
-        let mut transport = ManagedTransportConfigBuilder::default();
+        let mut transport = TransportConfigBuilder::default();
         transport
             .protocols(vec!["obfs4".parse().unwrap()])
             .path(CfgPath::new(o4p.into()))
@@ -52,8 +52,8 @@ where
             .clone()
             .block_on(run(
                 runtime,
-                socks_port,
-                dns_port,
+                Listen::new_localhost(socks_port),
+                Listen::new_localhost(dns_port),
                 config_sources,
                 arti_config,
                 client_config_builder.build().unwrap(),
