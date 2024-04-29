@@ -1,5 +1,5 @@
 package info.guardianproject.arti;
 
-public interface ArtiLoggingCallback {
+public interface ArtiLogListener {
     void log(String logLine);
 }

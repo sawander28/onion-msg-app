@@ -13,5 +13,5 @@ class ArtiJNI {
             String bridgeLine,
             int socksPort,
             int dnsPort,
-            ArtiLoggingCallback loggingCallback);
+            ArtiLogListener loggingCallback);
 }

@@ -56,8 +56,8 @@ class MainActivity : ComponentActivity() {
         requestNotificationPermission()
 
         if (ArtiServicesPreferences.with(this).isEnabled()) {
-            Log.i("###", "App.onCreate(): tor service enabled")
-            ArtiService.startService(this)
+            Log.i("###", "MainActivity.onCreate(): tor service is enabled in settings")
+            // ArtiService.startService(this)
         }
     }
 
@@ -113,7 +113,7 @@ fun MainScreen(prefs: IArtiServicesPreferences) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("TorServices (Arti)")
+                    Text("Tor Proxy (Arti)")
                 }
             )
         }
@@ -156,9 +156,9 @@ fun MainScreen(prefs: IArtiServicesPreferences) {
                             prefs.setEnabled(it)
                             enabled = it
                             if (it) {
-                                ArtiService.startService(context)
+                                // ArtiService.startService(context)
                             } else {
-                                ArtiService.stopService(context)
+                                // ArtiService.stopService(context)
                             }
                         },
                     )
