@@ -1,9 +1,10 @@
 package info.guardianproject.arti;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 
 import java.io.File;
 
@@ -35,6 +36,7 @@ public class ArtiProxy {
 
     private final int socksPort;
     private final int dnsPort;
+    private final List<String> bridgeLines;
     private final String cacheDir;
     private final String stateDir;
     private final ArtiLogListener logCallback;
@@ -43,6 +45,7 @@ public class ArtiProxy {
 
         socksPort = builder.socksPort;
         dnsPort = builder.dnsPort;
+        bridgeLines = Collections.unmodifiableList(builder.bridgeLines);
         cacheDir = builder.cacheDir.getAbsolutePath();
         stateDir = builder.stateDir.getAbsolutePath();
         logCallback = builder.logListener;
@@ -58,7 +61,7 @@ public class ArtiProxy {
                     cacheDir,
                     stateDir,
                     null,
-                    null,
+                    bridgeLines.isEmpty() ? null : bridgeLines.get(0),  // TODO support multiple
                     socksPort,
                     dnsPort,
                     logLine -> logCallback.log(logLine)
@@ -105,6 +108,7 @@ public class ArtiProxy {
 
         private int socksPort = DEFAULT_SOCKS_PORT;
         private int dnsPort = DEFAULT_DNS_PORT;
+        private List<String> bridgeLines = new ArrayList<>();
         private File cacheDir = null;
         private File stateDir = null;
         private ArtiLogListener logListener;
@@ -130,6 +134,11 @@ public class ArtiProxy {
          */
         public ArtiProxyBuilder setDnsPort(int dnsPort) {
             this.dnsPort = dnsPort;
+            return this;
+        }
+
+        public ArtiProxyBuilder setBridgeLines(List<String> bridgeLines) {
+            this.bridgeLines = bridgeLines;
             return this;
         }
 

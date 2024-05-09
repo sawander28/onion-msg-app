@@ -17,6 +17,7 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
     stateDir: JString<'local>,
     obfs4proxyPath: JString<'local>,
     bridgeLine: JString<'local>,
+    // unmanagedSnowflakeClientPort: jint,
     socks_port: jint,
     dns_port: jint,
     loggingCallback: JObject<'local>,
@@ -50,6 +51,7 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
         &stateDir,
         obfs4proxyPath.as_deref(),
         bridgeLine.as_deref(),
+        // unmanagedSnowflakeClientPort as u16,
         socks_port as u16,
         dns_port as u16,
         move |buf: &[u8]| {

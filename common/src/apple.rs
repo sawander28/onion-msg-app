@@ -21,6 +21,7 @@ pub extern "C" fn start_arti(
         &state_dir,
         None,
         None,
+        0,
         socks_port as u16,
         dns_port as u16,
         move |buf: &[u8]| {

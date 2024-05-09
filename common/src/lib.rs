@@ -1,11 +1,13 @@
 use anyhow::Result;
 use arti_client::config::pt::TransportConfigBuilder;
+use tor_linkspec::TransportIdError;
+use std::net::{Ipv4Addr, SocketAddr};
 use std::sync::Arc;
 
 use std::thread;
 
 use arti::{run, ArtiConfig};
-use arti_client::config::TorClientConfigBuilder;
+use arti_client::config::{PtTransportName, TorClientConfigBuilder};
 use tor_config::{CfgPath, ConfigurationSources, Listen};
 use tor_rtcompat::{BlockOn, PreferredRuntime};
 
@@ -18,6 +20,7 @@ fn start_arti_proxy<F>(
     state_dir: &str,
     obfs4proxy_path: Option<&str>,
     bridge_line: Option<&str>,
+    // unmanaged_snowflake_client_port: u16,
     socks_port: u16,
     dns_port: u16,
     log_fn: F,
@@ -33,6 +36,29 @@ where
     let config_sources = ConfigurationSources::default();
     let arti_config = ArtiConfig::default();
     let mut client_config_builder = TorClientConfigBuilder::from_directories(state_dir, cache_dir);
+
+    
+    let ptn: Result<PtTransportName, TransportIdError> = "snowflake".parse();
+    ptn.unwrap_or_else(|err| {
+        panic!("err snowflake fuckup {:?}", err);
+    });
+
+    // configure transport for unmanaged lyrebrid/obfs4
+    // TODO: this shouldn't be hardwired to iptproxy port, pass port as
+    // parameter and only setup transport if argument is set
+    let mut transport = TransportConfigBuilder::default();
+    transport
+        .protocols(vec!["obfs4".parse().unwrap()])
+        .proxy_addr(SocketAddr::new(std::net::IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 47300));
+    client_config_builder.bridges().transports().push(transport);
+    
+    // configure transport for snowflake
+    //    let mut transport = TransportConfigBuilder::default();
+    //    transport
+    //        .protocols(vec!["obfs4".parse().unwrap()])
+    //        .proxy_addr(SocketAddr::new(std::net::IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 52000));
+    //    client_config_builder.bridges().transports().push(transport);
+    
 
     if let Some(o4p) = obfs4proxy_path {
         let mut transport = TransportConfigBuilder::default();
