@@ -25,6 +25,9 @@ android: android-release
 android-debug: android-install-deps
 	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ../android/arti/src/main/jniLibs build
 
+android-debug-x86: android-install-deps
+	cargo ndk -t x86 -o ../android/arti/src/main/jniLibs build
+
 android-debug-x86_64: android-install-deps
 	cargo ndk -t x86_64 -o ../android/arti/src/main/jniLibs build
 
