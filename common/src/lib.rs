@@ -1,7 +1,7 @@
 use anyhow::Result;
 use arti_client::config::pt::TransportConfigBuilder;
 use tor_linkspec::TransportIdError;
-use std::net::{Ipv4Addr, SocketAddr};
+use std::net::SocketAddr;
 use std::sync::Arc;
 
 use std::thread;
@@ -49,14 +49,14 @@ where
     let mut transport = TransportConfigBuilder::default();
     transport
         .protocols(vec!["obfs4".parse().unwrap()])
-        .proxy_addr(SocketAddr::new(std::net::IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 47300));
+        .proxy_addr(SocketAddr::new("127.0.0.1".parse().unwrap(), 47300));
     client_config_builder.bridges().transports().push(transport);
     
     // configure transport for snowflake
     //    let mut transport = TransportConfigBuilder::default();
     //    transport
     //        .protocols(vec!["obfs4".parse().unwrap()])
-    //        .proxy_addr(SocketAddr::new(std::net::IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 52000));
+    //        .proxy_addr(SocketAddr::new("127.0.0.1".parse().unwrap(), 52000));
     //    client_config_builder.bridges().transports().push(transport);
     
 
