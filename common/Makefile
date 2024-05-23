@@ -83,6 +83,7 @@ $(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(targ
 
 clean:
 	cargo clean
+	cargo uninstall cargo-ndk
 	-rm -rf ../android/arti/src/main/jniLibs
 
 clean-all: clean
