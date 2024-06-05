@@ -15,6 +15,6 @@ fn main() {
     if target == "x86_64-linux-android" {
         let ndk_home = std::env::var("NDK_HOME").unwrap();
         println!("cargo:rustc-link-lib=static=clang_rt.builtins-x86_64-android");
-        println!("cargo:rustc-link-search={}/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/12.0.9/lib/linux", ndk_home);
+        println!("cargo:rustc-link-search={}/toolchains/llvm/prebuilt/linux-x86_64/lib/clang/17/lib/linux", ndk_home);
     }
 }

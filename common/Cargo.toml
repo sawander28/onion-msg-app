@@ -1,6 +1,6 @@
 [package]
 name = "arti-mobile-ex"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2018"
 
 
@@ -13,12 +13,12 @@ tor-linkspec = { version = "= 0.18.0"}
 
 
 # helpers
-anyhow = "1.0.52"
+anyhow = "1.0.79"
 
 # used to forward logs to system logger
-tracing-subscriber = "0.3.6"
-tracing = "0.1.18"
-tracing-appender = "0.2.0"
+tracing-subscriber = "0.3.18"
+tracing = "0.1.40"
+tracing-appender = "0.2.3"
 
 
 # dependancies specific to iOS

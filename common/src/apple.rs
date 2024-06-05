@@ -2,6 +2,7 @@ use crate::start_arti_proxy;
 
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int};
+use std::ptr::null;
 
 type LoggingCallback = extern "C" fn(*const c_char);
 
@@ -9,6 +10,8 @@ type LoggingCallback = extern "C" fn(*const c_char);
 pub extern "C" fn start_arti(
     state_dir: *const c_char,
     cache_dir: *const c_char,
+    obfs4proxy_path: *const c_char,
+    bridge_line: *const c_char,
     socks_port: c_int,
     dns_port: c_int,
     log_fn: LoggingCallback,
@@ -16,14 +19,26 @@ pub extern "C" fn start_arti(
     let state_dir = unsafe { CStr::from_ptr(state_dir) }.to_string_lossy();
     let cache_dir = unsafe { CStr::from_ptr(cache_dir) }.to_string_lossy();
 
+    let obfs4proxy_path = if obfs4proxy_path == null() {
+        None
+    }
+    else {
+        unsafe { CStr::from_ptr(obfs4proxy_path) }.to_str().ok()
+    };
+
+    let bridge_line = if bridge_line == null() {
+        None
+    } else {
+        unsafe { CStr::from_ptr(bridge_line) }.to_str().ok()
+    };
+
     let result = match start_arti_proxy(
         &cache_dir,
         &state_dir,
-        0,
-        0,
-        None,
-        None,
-        0,
+        0,  // obfs4 port
+        0,  // snowflake port
+        obfs4proxy_path,
+        bridge_line,
         socks_port as u16,
         dns_port as u16,
         move |buf: &[u8]| {
