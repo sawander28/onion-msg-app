@@ -1,13 +1,15 @@
 use anyhow::Result;
+use arti_client::config::pt::TransportConfigBuilder;
+use std::net::SocketAddr;
 use std::sync::Arc;
+use tor_linkspec::TransportIdError;
 
 use std::thread;
 
 use arti::{run, ArtiConfig};
-use arti_client::config::TorClientConfigBuilder;
-use tor_config::{ConfigurationSources, CfgPath, Listen};
+use arti_client::config::{PtTransportName, TorClientConfigBuilder};
+use tor_config::{CfgPath, ConfigurationSources, Listen};
 use tor_rtcompat::{BlockOn, PreferredRuntime};
-use arti_client::config::pt::ManagedTransportConfigBuilder;
 
 use tracing_subscriber::fmt::{Layer, Subscriber};
 use tracing_subscriber::layer::SubscriberExt;
@@ -16,8 +18,10 @@ use tracing_subscriber::util::SubscriberInitExt;
 fn start_arti_proxy<F>(
     cache_dir: &str,
     state_dir: &str,
+    obfs4_port: u16,
+    snowflake_port: u16,
     obfs4proxy_path: Option<&str>,
-    bridge_line: Option<&str>,
+    bridge_lines: Option<&str>,
     socks_port: u16,
     dns_port: u16,
     log_fn: F,
@@ -34,29 +38,57 @@ where
     let arti_config = ArtiConfig::default();
     let mut client_config_builder = TorClientConfigBuilder::from_directories(state_dir, cache_dir);
 
+    let ptn: Result<PtTransportName, TransportIdError> = "snowflake".parse();
+    ptn.unwrap_or_else(|err| {
+        panic!("err snowflake fuckup {:?}", err);
+    });
+
+    // configure transport for unmanaged lyrebrid/obfs4
+    if obfs4_port > 0 {
+        let mut transport = TransportConfigBuilder::default();
+        transport
+            .protocols(vec!["obfs4".parse().unwrap()])
+            .proxy_addr(SocketAddr::new("127.0.0.1".parse().unwrap(), 47300));
+        client_config_builder.bridges().transports().push(transport);
+    }
+
+    // configure transport for unmanaged snowflake
+    if snowflake_port > 0 {
+        let mut transport = TransportConfigBuilder::default();
+        transport
+            .protocols(vec!["snowflake".parse().unwrap()])
+            .proxy_addr(SocketAddr::new(
+                "127.0.0.1".parse().unwrap(),
+                snowflake_port,
+            ));
+        client_config_builder.bridges().transports().push(transport);
+    }
+
+    // TODO: make this go away?
     if let Some(o4p) = obfs4proxy_path {
-        let mut transport = ManagedTransportConfigBuilder::default();
+        let mut transport = TransportConfigBuilder::default();
         transport
             .protocols(vec!["obfs4".parse().unwrap()])
             .path(CfgPath::new(o4p.into()))
             .run_on_startup(true);
         client_config_builder.bridges().transports().push(transport);
     }
-    if let Some(l) = bridge_line {
-        client_config_builder.bridges().bridges().push(l.parse().unwrap());
+    if let Some(l) = bridge_lines {
+        for bridge_line in l.split("\n") {
+            client_config_builder
+                .bridges()
+                .bridges()
+                .push(bridge_line.parse().unwrap());
+        }
     }
-
-
-    let socks_listen = Listen::new_localhost(socks_port);
-    let dns_listen = Listen::new_localhost(dns_port);
 
     thread::spawn(move || {
         runtime
             .clone()
             .block_on(run(
                 runtime,
-                socks_listen,
-                dns_listen,
+                Listen::new_localhost(socks_port),
+                Listen::new_localhost(dns_port),
                 config_sources,
                 arti_config,
                 client_config_builder.build().unwrap(),

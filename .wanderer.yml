@@ -1,0 +1,23 @@
+places:
+
+  - name: arti-mobile-ex
+    image: docker.io/debian:11-slim
+    provisions:
+      - install-dependencies
+
+journeys:
+
+  - name: install-dependencies
+    places:
+      - arti-mobile-ex
+    script:
+      - apt update -yyq
+      - apt upgrade -yyq
+      - apt install -yqq build-essential curl openjdk-11-jdk-headless wget unzip
+      - curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+  - name: android
+    places:
+      - arti-mobile-ex
+    script:
+      - cd common && make android

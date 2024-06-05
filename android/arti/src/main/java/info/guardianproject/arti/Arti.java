@@ -9,6 +9,10 @@ import androidx.webkit.WebViewFeature;
 
 import java.io.File;
 
+/**
+ * It's recommended to use ArtiProxy or ArtiProxyService instead.
+ */
+@Deprecated
 public class Arti {
 
     public final static int SOCKS_PORT = 9150;
@@ -21,7 +25,7 @@ public class Arti {
      * default socks5 proxy: localhost:9150
      */
     public static int startSocksProxy(final File cacheDir, final File stateDir, String obfs4proxyPath, String bridgeLine) {
-        String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath(), obfs4proxyPath, bridgeLine, SOCKS_PORT, DNS_PORT, logLine -> Log.d("arti.native", logLine));
+        String artiResult = ArtiJNI.startArtiProxyJNI(cacheDir.getAbsolutePath(), stateDir.getAbsolutePath(), 0, 0, obfs4proxyPath, bridgeLine, SOCKS_PORT, DNS_PORT, logLine -> Log.d("arti.native", logLine));
         Log.d("arti-android", "arti result: " + artiResult);
 
         return SOCKS_PORT;

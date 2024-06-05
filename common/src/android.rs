@@ -15,8 +15,11 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
     _class: JClass<'local>,
     cacheDir: JString<'local>,
     stateDir: JString<'local>,
+    obfs4Port: jint,
+    snowflakePort: jint,
     obfs4proxyPath: JString<'local>,
-    bridgeLine: JString<'local>,
+    bridgeLines: JString<'local>,
+    // unmanagedSnowflakeClientPort: jint,
     socks_port: jint,
     dns_port: jint,
     loggingCallback: JObject<'local>,
@@ -35,7 +38,7 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
         Ok(v) => Some(v.to_string_lossy().into_owned()),
         Err(_) => None,
     };
-    let bridgeLine: Option<String> = match env.get_string(&bridgeLine) {
+    let bridgeLines: Option<String> = match env.get_string(&bridgeLines) {
         Ok(v) => Some(v.to_string_lossy().into_owned()),
         Err(_) => None,
     };
@@ -43,29 +46,39 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<
     let log_cb_ref = env
         .new_global_ref(loggingCallback)
         .expect("couldn't create global ref to log callback");
-    let exec = Executor::new(Arc::new(env.get_java_vm().expect("could get jvm ref from env")));
+    let exec = Executor::new(Arc::new(
+        env.get_java_vm().expect("could get jvm ref from env"),
+    ));
 
     let result = match start_arti_proxy(
         &cacheDir,
         &stateDir,
+        obfs4Port as u16,
+        snowflakePort as u16,
         obfs4proxyPath.as_deref(),
-        bridgeLine.as_deref(),
+        bridgeLines.as_deref(),
+        // unmanagedSnowflakeClientPort as u16,
         socks_port as u16,
         dns_port as u16,
         move |buf: &[u8]| {
             let msg =
                 std::str::from_utf8(buf).expect("couldn't convert buffered log message to str");
             exec.with_attached(|env| -> Result<(), jni::errors::Error> {
-                let jmsg: AutoLocal<JObject> =
-                    env.auto_local(env.new_string(msg).expect("couldn't convert log message to jstring").into());
+                let jmsg: AutoLocal<JObject> = env.auto_local(
+                    env.new_string(msg)
+                        .expect("couldn't convert log message to jstring")
+                        .into(),
+                );
                 env.call_method(
                     &log_cb_ref,
                     "log",
                     "(Ljava/lang/String;)V",
                     &[JValue::from(&jmsg)],
-                ).expect("calling log callback method failed");
+                )
+                .expect("calling log callback method failed");
                 Ok(())
-            }).expect("attaching to Executor failed: log callback");
+            })
+            .expect("attaching to Executor failed: log callback");
         },
     ) {
         Ok(res) => format!("Output: {}", res),

@@ -32,6 +32,9 @@ android: android-release
 android-debug: android-install-deps
 	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ../android/arti/src/main/jniLibs build
 
+android-debug-x86: android-install-deps
+	cargo ndk -t x86 -o ../android/arti/src/main/jniLibs build
+
 android-debug-x86_64: android-install-deps
 	cargo ndk -t x86_64 -o ../android/arti/src/main/jniLibs build
 
@@ -87,6 +90,7 @@ $(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(targ
 
 clean:
 	cargo clean
+	cargo uninstall cargo-ndk  # make sure we have a intuitive way to recover from broken builds due to oudated cargo-ndk
 	rm -f arti-mobile.h
 	-rm -rf ../android/arti/src/main/jniLibs
 

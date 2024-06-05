@@ -35,6 +35,8 @@ pub extern "C" fn start_arti(
     let result = match start_arti_proxy(
         &cache_dir,
         &state_dir,
+        0,  // obfs4 port
+        0,  // snowflake port
         obfs4proxy_path,
         bridge_line,
         socks_port as u16,
