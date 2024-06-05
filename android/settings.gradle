@@ -24,5 +24,3 @@ dependencyResolutionManagement {
 rootProject.name = "arti-android"
 include ':sample'
 include ':arti'
-include ':torproxy'
-include ':artiservice'
