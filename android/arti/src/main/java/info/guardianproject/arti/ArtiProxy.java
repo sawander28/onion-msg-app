@@ -241,6 +241,12 @@ public class ArtiProxy {
 
         /**
          * Register a listener for receiving the log output of Arti.
+         *
+         * <p>
+         * NOTE: this callback get called from threads which are managed by Arti. So it's
+         * highly recommended consider passing log callbacks on to a thread that's managed
+         * by you.
+         * </p>
          */
         public ArtiProxyBuilder setLogListener(ArtiLogListener logListener) {
             this.logListener = logListener;
@@ -262,7 +268,7 @@ public class ArtiProxy {
             stateDir.mkdirs();
 
             if (logListener == null) {
-                // Create empty callback is nothing was registered, so so the arti jni
+                // Create empty callback if nothing was registered, so so the arti jni
                 // implementation always has an object to call and never has to worry that it's not
                 // initialized. This implementation just ignores all logLines sent from arti.
                 logListener = logLine -> {

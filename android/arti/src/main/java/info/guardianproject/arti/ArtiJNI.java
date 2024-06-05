@@ -1,5 +1,8 @@
 package info.guardianproject.arti;
 
+/**
+ * It's discouraged to use this directly. Use ArtiProxy instead.
+ */
 class ArtiJNI {
 
     static {
