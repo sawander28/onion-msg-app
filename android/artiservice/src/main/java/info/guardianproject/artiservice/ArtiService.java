@@ -37,8 +37,8 @@ import info.guardianproject.arti.ArtiProxy;
  *                |   Stopped   |
  *                |             |
  *                +-------------+
- *                   |       ^
- *                   v       |
+ *                  |        ^
+ *                  v        |
  *   startBackgroundProxy()  |
  *                  |        |
  *                  |      stopProxy()

@@ -9,6 +9,8 @@ class ArtiJNI {
     static native String startArtiProxyJNI(
             String cacheDir,
             String stateDir,
+            int obfs4Port,
+            int snowflakePort,
             String obfs4proxyPath,
             String bridgeLine,
             int socksPort,

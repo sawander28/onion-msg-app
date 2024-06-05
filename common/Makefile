@@ -83,7 +83,7 @@ $(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(targ
 
 clean:
 	cargo clean
-	cargo uninstall cargo-ndk
+	cargo uninstall cargo-ndk  # make sure we have a intuitive way to recover from broken builds due to oudated cargo-ndk
 	-rm -rf ../android/arti/src/main/jniLibs
 
 clean-all: clean

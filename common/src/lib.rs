@@ -1,8 +1,8 @@
 use anyhow::Result;
 use arti_client::config::pt::TransportConfigBuilder;
-use tor_linkspec::TransportIdError;
 use std::net::SocketAddr;
 use std::sync::Arc;
+use tor_linkspec::TransportIdError;
 
 use std::thread;
 
@@ -18,9 +18,10 @@ use tracing_subscriber::util::SubscriberInitExt;
 fn start_arti_proxy<F>(
     cache_dir: &str,
     state_dir: &str,
+    obfs4_port: u16,
+    snowflake_port: u16,
     obfs4proxy_path: Option<&str>,
-    bridge_line: Option<&str>,
-    // unmanaged_snowflake_client_port: u16,
+    bridge_lines: Option<&str>,
     socks_port: u16,
     dns_port: u16,
     log_fn: F,
@@ -37,29 +38,33 @@ where
     let arti_config = ArtiConfig::default();
     let mut client_config_builder = TorClientConfigBuilder::from_directories(state_dir, cache_dir);
 
-    
     let ptn: Result<PtTransportName, TransportIdError> = "snowflake".parse();
     ptn.unwrap_or_else(|err| {
         panic!("err snowflake fuckup {:?}", err);
     });
 
     // configure transport for unmanaged lyrebrid/obfs4
-    // TODO: this shouldn't be hardwired to iptproxy port, pass port as
-    // parameter and only setup transport if argument is set
-    let mut transport = TransportConfigBuilder::default();
-    transport
-        .protocols(vec!["obfs4".parse().unwrap()])
-        .proxy_addr(SocketAddr::new("127.0.0.1".parse().unwrap(), 47300));
-    client_config_builder.bridges().transports().push(transport);
-    
-    // configure transport for snowflake
-    //    let mut transport = TransportConfigBuilder::default();
-    //    transport
-    //        .protocols(vec!["obfs4".parse().unwrap()])
-    //        .proxy_addr(SocketAddr::new("127.0.0.1".parse().unwrap(), 52000));
-    //    client_config_builder.bridges().transports().push(transport);
-    
+    if obfs4_port > 0 {
+        let mut transport = TransportConfigBuilder::default();
+        transport
+            .protocols(vec!["obfs4".parse().unwrap()])
+            .proxy_addr(SocketAddr::new("127.0.0.1".parse().unwrap(), 47300));
+        client_config_builder.bridges().transports().push(transport);
+    }
 
+    // configure transport for unmanaged snowflake
+    if snowflake_port > 0 {
+        let mut transport = TransportConfigBuilder::default();
+        transport
+            .protocols(vec!["snowflake".parse().unwrap()])
+            .proxy_addr(SocketAddr::new(
+                "127.0.0.1".parse().unwrap(),
+                snowflake_port,
+            ));
+        client_config_builder.bridges().transports().push(transport);
+    }
+
+    // TODO: make this go away?
     if let Some(o4p) = obfs4proxy_path {
         let mut transport = TransportConfigBuilder::default();
         transport
@@ -68,10 +73,14 @@ where
             .run_on_startup(true);
         client_config_builder.bridges().transports().push(transport);
     }
-    if let Some(l) = bridge_line {
-        client_config_builder.bridges().bridges().push(l.parse().unwrap());
+    if let Some(l) = bridge_lines {
+        for bridge_line in l.split("\n") {
+            client_config_builder
+                .bridges()
+                .bridges()
+                .push(bridge_line.parse().unwrap());
+        }
     }
-
 
     thread::spawn(move || {
         runtime

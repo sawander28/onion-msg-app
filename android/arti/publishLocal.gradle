@@ -15,6 +15,7 @@ project.afterEvaluate {
         publishing {
             publications {
                 LibraryRelease(MavenPublication) {
+
                     from components.findByName('release')
                     artifact(sourceJar)
                     setGroupId groupId

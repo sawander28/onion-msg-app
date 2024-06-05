@@ -32,10 +32,7 @@ android {
 }
 
 dependencies {
-    // TODO: update this once ipt proxy releases are fixed
-    implementation 'com.netzarchitekten:IPtProxy:3.7.0'
-    //implementation 'com.github.tladesignz:IPtProxy:3.8.1'
-    // implementation 'com.netzarchitekten:IPtProxy:3.8.1'
+    implementation 'com.netzarchitekten:IPtProxy:3.8.2'
 
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.google.android.material:material:1.8.0'
