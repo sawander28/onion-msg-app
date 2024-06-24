@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView connectionStatus;
     private CountDownLatch latch;
     private Handler mainHandler;
+    private int selectedOption;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,12 +84,8 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
+                selectedOption = position;
                 onSelectionChanged(position); // get options
-//                    }
-//                }).start();
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -97,6 +94,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void checkConnection() {
+        switch (selectedOption){
+            case 1:
+                ((App)getApplication()).connectTorDirect();
+                break;
+            case 2:
+                List<String> bridgeLines = Arrays.asList(
+                        // NOTICE: you'll need to provide bridge lines to make this work!
+                        //obfs4 69.235.46.22:30913 F79914011EB368C94E58F6CCF8A55A92EFD5F496 cert=ZKLm+4biqgPIf/g1s3slv8jLSzIzLSXAHFOfBLqtrNvnTM6LVbxe/K8e8jJKiXwOpvkoDw iat-mode=0
+                        //obfs4 82.74.251.112:9449 628B95EEAE48758CBAA2812AE99E1AB5B3BE44D4 cert=i7tmgWvq4X2rncJz4FQsQWwkXiEWVE7Nvm1gffYn5ZlVsA0kBF6c/8041dTB4mi0TSShWA iat-mode=0
+                        bridgeLineInput.getText().toString()
+                );
+                ((App) getApplication()).connectWithLyrebird(Integer.parseInt(obfs4Port.getText().toString()), bridgeLines);
+                break;
+            case 3:
+                break;
+        }
         fab.setEnabled(false);
         fabSpin.setDuration(1000*60).rotationBy((float) (1000 * 60) /4).setInterpolator(new LinearInterpolator()).start();
         connectionStatus.setVisibility(View.VISIBLE);
@@ -167,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
                 frontInput.setVisibility(View.GONE);
                 bridgeLineInput.setVisibility(View.GONE);
                 noSelection.setVisibility(View.GONE);
-                ((App)getApplication()).connectTorDirect();
                 break;
             case 2:
                 bridgeLineInput.setVisibility(View.VISIBLE);
@@ -176,22 +188,6 @@ public class MainActivity extends AppCompatActivity {
                 targetInput.setVisibility(View.GONE);
                 frontInput.setVisibility(View.GONE);
                 noSelection.setVisibility(View.GONE);
-//                waitForButtonClick();
-//                Log.d("DEBUG", "onSelectionChanged: got in case 2");
-//                mainHandler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-                        List<String> bridgeLines = Arrays.asList(
-                                // NOTICE: you'll need to provide bridge lines to make this work!
-                                //obfs4 69.235.46.22:30913 F79914011EB368C94E58F6CCF8A55A92EFD5F496 cert=ZKLm+4biqgPIf/g1s3slv8jLSzIzLSXAHFOfBLqtrNvnTM6LVbxe/K8e8jJKiXwOpvkoDw iat-mode=0
-                                //obfs4 82.74.251.112:9449 628B95EEAE48758CBAA2812AE99E1AB5B3BE44D4 cert=i7tmgWvq4X2rncJz4FQsQWwkXiEWVE7Nvm1gffYn5ZlVsA0kBF6c/8041dTB4mi0TSShWA iat-mode=0
-                                bridgeLineInput.getText().toString()
-                        );
-
-//                        ((App) getApplication()).connectWithLyrebird(Integer.parseInt(obfs4Port.getText().toString()),
-//                                              bridgeLines);
-//                    }
-//                });
                 break;
             case 3:
                 bridgeLineInput.setVisibility(View.VISIBLE);

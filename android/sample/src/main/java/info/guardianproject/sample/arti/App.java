@@ -91,4 +91,29 @@ public class App extends Application {
         artiProxy.start();
     }
 
+//    public void connectWithSnowflake(int port, List<String> bridgeLines) {
+//        IPtProxy.startSnowflake(
+//                stunServers, // String ice,
+//                target, //String url,
+//                front, // String fronts,
+//                null, // ampCache, // String ampCache,
+//                null, // String sqsQueueURL,
+//                null, // String sqsCredsStr,
+//                null, // String logFile,
+//                false, // boolean logToStateDir,
+//                false, // boolean keepLocalAddresses,
+//                false, // boolean unsafeLogging,
+//                1 // long maxPeers
+//                );
+//
+//        ArtiProxy artiProxy = ArtiProxy.Builder(this)
+//                // .setUnmanagedSnowflakeClientPort((int) IPtProxy.snowflakePort())
+//                //.setObfs4Port()
+//                //.setBridgeLines()
+//                .setSnowflakePort((int) IPtProxy.snowflakePort())
+//                .setLogListener((log) -> {Log.e("artilog", log);})
+//                .build();
+//        artiProxy.start();
+//    }
+
 }
