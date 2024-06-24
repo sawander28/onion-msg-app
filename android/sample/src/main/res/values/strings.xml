@@ -7,9 +7,16 @@
     <string name="tor_no_arti">⚠ connected to check.torproject.org without arti</string>
     <string name="tor_with_arti">✅ connected to check.torproject.org using arti</string>
     <string name="connection_failed">"⛔ connecting failed"</string>
+    <string name="enter_snowflake_target">Enter Snowflake target</string>
+    <string name="enter_stun_servers">Enter stun servers</string>
+    <string name="enter_snowflake_front">Enter Snowflake front</string>
+    <string name="enter_bridge_line">Enter bridge line(s)</string>
+    <string name="please_select_a_valid_option">Please select a valid option</string>
+    <string name="enter_obfs4_port">Enter obfs4 port</string>
     <string-array name="connection_options">
-        <item>Automatic Configuration</item>
-        <item>Specify obfs4 path and bridge line</item>
-        <item>Specify obfs4 path, bridge line</item>
+        <item>Select Pluggable Transport</item>
+        <item>Tor Direct (no PT)</item>
+        <item>Lyrebird/Obfs4</item>
+        <item>Snowflake</item>
     </string-array>
 </resources>
