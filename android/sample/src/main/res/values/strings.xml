@@ -13,6 +13,7 @@
     <string name="enter_bridge_line">Enter bridge line(s)</string>
     <string name="please_select_a_valid_option">Please select a valid option</string>
     <string name="enter_obfs4_port">Enter obfs4 port</string>
+    <string name="artilog_output">Artilog Output</string>
     <string-array name="connection_options">
         <item>Select Pluggable Transport</item>
         <item>Tor Direct (no PT)</item>

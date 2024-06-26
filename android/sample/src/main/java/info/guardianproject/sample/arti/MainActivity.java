@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
@@ -29,6 +30,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private int selectedOption;
     private TextView logOutput;
     private ScrollView logScrollView;
+    private SwitchMaterial logLabel;
     private BroadcastReceiver logReceiver;
     private ConstraintLayout constraintLayout;
     private Button startButton;
@@ -90,6 +93,11 @@ public class MainActivity extends AppCompatActivity {
 
         logOutput = findViewById(R.id.logTextView);
         logScrollView = findViewById(R.id.logScrollView);
+        logLabel = findViewById(R.id.logLabel);
+
+        logLabel.setOnCheckedChangeListener((view, isChecked) -> {
+            logScrollView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        });
         logReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -147,7 +155,12 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
-        checkConnection();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                checkConnection();
+            }
+        }, 2000);
     }
 
     private void checkConnection() {
@@ -205,8 +218,6 @@ public class MainActivity extends AppCompatActivity {
     private void onSelectionChanged(int selection) {
         ConstraintSet constraintSet = new ConstraintSet();
 
-
-        // Update the UI or perform some action based on the selection
         switch (selection) {
             case 0:
                 stunServerInput.setVisibility(View.GONE);
@@ -216,24 +227,23 @@ public class MainActivity extends AppCompatActivity {
                 obfs4Port.setVisibility(View.GONE);
                 noSelection.setVisibility(View.VISIBLE);
                 logScrollView.setVisibility(View.GONE);
+                logLabel.setVisibility(View.GONE);
                 startButton.setEnabled(false);
                 fab.setEnabled(false);
                 constraintSet.clone(constraintLayout);
                 break;
             case 1:
-                // do nothing
                 stunServerInput.setVisibility(View.GONE);
                 obfs4Port.setVisibility(View.GONE);
                 targetInput.setVisibility(View.GONE);
                 frontInput.setVisibility(View.GONE);
                 bridgeLineInput.setVisibility(View.GONE);
                 noSelection.setVisibility(View.GONE);
-                logScrollView.setVisibility(View.VISIBLE);
+                logLabel.setVisibility(View.VISIBLE);
                 startButton.setEnabled(true);
                 fab.setEnabled(true);
                 constraintSet.clone(constraintLayout);
-                constraintSet.connect(logScrollView.getId(), ConstraintSet.TOP, spinner.getId(), ConstraintSet.BOTTOM);
-                Log.d("DEBUG", String.valueOf(logScrollView.getVisibility()));
+                constraintSet.connect(logLabel.getId(), ConstraintSet.TOP, spinner.getId(), ConstraintSet.BOTTOM);
                 break;
             case 2:
                 bridgeLineInput.setVisibility(View.VISIBLE);
@@ -242,11 +252,11 @@ public class MainActivity extends AppCompatActivity {
                 targetInput.setVisibility(View.GONE);
                 frontInput.setVisibility(View.GONE);
                 noSelection.setVisibility(View.GONE);
-                logScrollView.setVisibility(View.VISIBLE);
+                logLabel.setVisibility(View.VISIBLE);
                 startButton.setEnabled(true);
                 fab.setEnabled(true);
                 constraintSet.clone(constraintLayout);
-                constraintSet.connect(logScrollView.getId(), ConstraintSet.TOP, bridgeLineInput.getId(), ConstraintSet.BOTTOM);
+                constraintSet.connect(logLabel.getId(), ConstraintSet.TOP, bridgeLineInput.getId(), ConstraintSet.BOTTOM);
                 break;
             case 3:
                 bridgeLineInput.setVisibility(View.VISIBLE);
@@ -255,14 +265,13 @@ public class MainActivity extends AppCompatActivity {
                 frontInput.setVisibility(View.VISIBLE);
                 noSelection.setVisibility(View.GONE);
                 obfs4Port.setVisibility(View.GONE);
-                logScrollView.setVisibility(View.VISIBLE);
+                logLabel.setVisibility(View.VISIBLE);
                 startButton.setEnabled(true);
                 fab.setEnabled(true);
                 constraintSet.clone(constraintLayout);
-                constraintSet.connect(logScrollView.getId(), ConstraintSet.TOP, frontInput.getId(), ConstraintSet.BOTTOM);
+                constraintSet.connect(logLabel.getId(), ConstraintSet.TOP, frontInput.getId(), ConstraintSet.BOTTOM);
                 break;
         }
-
         constraintSet.applyTo(constraintLayout);
     }
 
