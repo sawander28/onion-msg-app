@@ -103,7 +103,8 @@ public class App extends Application {
                 .build();
         artiProxy.start();
     }
-    public void connectWithSnowflake(int port, String stunServers, String target, String front) {
+    public void connectWithSnowflake(String stunServers, String target, String front,
+                                     List<String> bridgeLines) {
         IPtProxy.startSnowflake(
                 stunServers, // String ice,
                 target, //String url,

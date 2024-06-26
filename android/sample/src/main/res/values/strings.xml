@@ -10,7 +10,7 @@
     <string name="enter_snowflake_target">Enter Snowflake target</string>
     <string name="enter_stun_servers">Enter stun servers</string>
     <string name="enter_snowflake_front">Enter Snowflake front</string>
-    <string name="enter_bridge_line">Enter bridge line(s)</string>
+    <string name="enter_bridge_line">Enter bridge line(s), comma separated</string>
     <string name="please_select_a_valid_option">Please select a valid option</string>
     <string name="enter_obfs4_port">Enter obfs4 port</string>
     <string name="artilog_output">Artilog Output</string>
