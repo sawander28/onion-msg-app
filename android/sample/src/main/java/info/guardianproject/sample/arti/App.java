@@ -4,8 +4,14 @@
 package info.guardianproject.sample.arti;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
 import java.util.Arrays;
@@ -19,7 +25,6 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
 //        Log.d("###", String.format("obfs2 port: %d", IPtProxy.obfs2Port()));
 //        Log.d("###", String.format("obfs3 port: %d", IPtProxy.obfs3Port()));
 //        Log.d("###", String.format("obfs4 port: %d", IPtProxy.obfs4Port()));
@@ -73,13 +78,45 @@ public class App extends Application {
         ArtiProxy artiProxy = ArtiProxy.Builder(this)
                 // .setUnmanagedSnowflakeClientPort((int) IPtProxy.snowflakePort())
 //                .setSnowflakePort((int) IPtProxy.snowflakePort())
-                .setLogListener((log) -> {Log.e("artilog", log);})
+                .setLogListener((log) -> {
+                    Log.e("artilog", log);
+                    App.logOutput(getApplicationContext(), log + "\n");
+                })
                 .build();
         artiProxy.start();
     }
 
     public void connectWithLyrebird(int port, List<String> bridgeLines) {
         IPtProxy.startLyrebird("DEBUG", false, false, null);
+        List<String> bridgeLines2 = Arrays.asList(
+                // NOTICE: you'll need to provide bridge lines to make this work!
+                "obfs4 69.235.46.22:30913 F79914011EB368C94E58F6CCF8A55A92EFD5F496 cert=ZKLm+4biqgPIf/g1s3slv8jLSzIzLSXAHFOfBLqtrNvnTM6LVbxe/K8e8jJKiXwOpvkoDw iat-mode=0",
+                "obfs4 82.74.251.112:9449 628B95EEAE48758CBAA2812AE99E1AB5B3BE44D4 cert=i7tmgWvq4X2rncJz4FQsQWwkXiEWVE7Nvm1gffYn5ZlVsA0kBF6c/8041dTB4mi0TSShWA iat-mode=0"
+        );
+        ArtiProxy artiProxy = ArtiProxy.Builder(this)
+                .setObfs4Port(port)
+                .setBridgeLines(bridgeLines2)
+                .setLogListener((log) -> {
+                    Log.e("artilog", log);
+                    App.logOutput(getApplicationContext(), log + "\n");
+                })
+                .build();
+        artiProxy.start();
+    }
+    public void connectWithSnowflake(int port, String stunServers, String target, String front) {
+        IPtProxy.startSnowflake(
+                stunServers, // String ice,
+                target, //String url,
+                front, // String fronts,
+                null, // ampCache, // String ampCache,
+                null, // String sqsQueueURL,
+                null, // String sqsCredsStr,
+                null, // String logFile,
+                false, // boolean logToStateDir,
+                false, // boolean keepLocalAddresses,
+                false, // boolean unsafeLogging,
+                1 // long maxPeers
+                );
 
         ArtiProxy artiProxy = ArtiProxy.Builder(this)
                 // .setUnmanagedSnowflakeClientPort((int) IPtProxy.snowflakePort())
@@ -91,29 +128,12 @@ public class App extends Application {
         artiProxy.start();
     }
 
-//    public void connectWithSnowflake(int port, List<String> bridgeLines) {
-//        IPtProxy.startSnowflake(
-//                stunServers, // String ice,
-//                target, //String url,
-//                front, // String fronts,
-//                null, // ampCache, // String ampCache,
-//                null, // String sqsQueueURL,
-//                null, // String sqsCredsStr,
-//                null, // String logFile,
-//                false, // boolean logToStateDir,
-//                false, // boolean keepLocalAddresses,
-//                false, // boolean unsafeLogging,
-//                1 // long maxPeers
-//                );
-//
-//        ArtiProxy artiProxy = ArtiProxy.Builder(this)
-//                // .setUnmanagedSnowflakeClientPort((int) IPtProxy.snowflakePort())
-//                //.setObfs4Port()
-//                //.setBridgeLines()
-//                .setSnowflakePort((int) IPtProxy.snowflakePort())
-//                .setLogListener((log) -> {Log.e("artilog", log);})
-//                .build();
-//        artiProxy.start();
-//    }
+
+    public static void logOutput(Context context, String logMessage) {
+        Intent intent = new Intent("LOG_MESSAGE");
+        intent.putExtra("logMessage", logMessage);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
 
 }
