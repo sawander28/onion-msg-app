@@ -1,4 +1,5 @@
 apply plugin: 'maven-publish'
+apply plugin: 'kotlin-android'
 
 task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -15,16 +16,15 @@ project.afterEvaluate {
         publishing {
             publications {
                 LibraryRelease(MavenPublication) {
-
-                    from components.findByName('release')
-                    artifact(sourceJar)
+		    from components.release
+                    //artifact(sourceJar)
                     setGroupId groupId
                     setArtifactId artifactId
                     version versionName + releaseSuffix
                 }
                 LibraryDebug(MavenPublication) {
-                    from components.findByName('debug')
-                    artifact(sourceJar)
+                    from components.debug
+                    //artifact(sourceJar)
                     setGroupId groupId
                     setArtifactId artifactId
                     version versionName + debugSuffix
