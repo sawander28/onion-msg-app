@@ -1,4 +1,5 @@
 apply plugin: 'maven-publish'
+apply plugin: 'kotlin-android'
 
 task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -9,22 +10,21 @@ project.afterEvaluate {
     publishToMavenLocal {
         def groupId = LIBRARY_GROUP
         def artifactId = LIBRARY_ARTIFACT_ID
-        def versionName = LIBRARY_VERSION_NAME + "-local"
+        def versionName = LIBRARY_VERSION_NAME
         def debugSuffix = "-debug"
-        def releaseSuffix = "-release"
+        def releaseSuffix = ""
         publishing {
             publications {
                 LibraryRelease(MavenPublication) {
-
-                    from components.findByName('release')
-                    artifact(sourceJar)
+		    from components.release
+                    //artifact(sourceJar)
                     setGroupId groupId
                     setArtifactId artifactId
                     version versionName + releaseSuffix
                 }
                 LibraryDebug(MavenPublication) {
-                    from components.findByName('debug')
-                    artifact(sourceJar)
+                    from components.debug
+                    //artifact(sourceJar)
                     setGroupId groupId
                     setArtifactId artifactId
                     version versionName + debugSuffix
