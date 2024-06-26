@@ -98,7 +98,7 @@ public class App extends Application {
                 .setBridgeLines(bridgeLines2)
                 .setLogListener((log) -> {
                     Log.e("artilog", log);
-                    App.logOutput(getApplicationContext(), log + "\n");
+                    App.logOutput(getApplicationContext(), log);
                 })
                 .build();
         artiProxy.start();
@@ -123,7 +123,10 @@ public class App extends Application {
                 //.setObfs4Port()
                 //.setBridgeLines()
                 .setSnowflakePort((int) IPtProxy.snowflakePort())
-                .setLogListener((log) -> {Log.e("artilog", log);})
+                .setLogListener((log) -> {
+                    Log.e("artilog", log);
+                    App.logOutput(getApplicationContext(), log);
+                })
                 .build();
         artiProxy.start();
     }
