@@ -7,14 +7,11 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.view.View;
-import android.widget.ScrollView;
-import android.widget.TextView;
+
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 import IPtProxy.IPtProxy;
@@ -38,40 +35,24 @@ public class App extends Application {
 
         // run snowflake client (values copied from )
         // TODO: fix this, once we've updated to the latest iptproxy version
-        final String stunServers = "stun:stun.l.google.com:19302,stun:stun.antisip.com:3478,stun:stun.bluesip.net:3478,stun:stun.dus.net:3478,stun:stun.epygi.com:3478,stun:stun.sonetel.com:3478,stun:stun.sonetel.net:3478,stun:stun.stunprotocol.org:3478,stun:stun.uls.co.za:3478,stun:stun.voipgate.com:3478,stun:stun.voys.nl:3478";
-        final String target = "https://snowflake-broker.torproject.net.global.prod.fastly.net/";
-        final String front = "github.githubassets.com";
-        final String ampCache = "https://cdn.ampproject.org/";
+//        final String stunServers = "stun:stun.l.google.com:19302,stun:stun.antisip.com:3478,stun:stun.bluesip.net:3478,stun:stun.dus.net:3478,stun:stun.epygi.com:3478,stun:stun.sonetel.com:3478,stun:stun.sonetel.net:3478,stun:stun.stunprotocol.org:3478,stun:stun.uls.co.za:3478,stun:stun.voipgate.com:3478,stun:stun.voys.nl:3478";
+//        final String target = "https://snowflake-broker.torproject.net.global.prod.fastly.net/";
+//        final String front = "github.githubassets.com";
+//        final String ampCache = "https://cdn.ampproject.org/";
         // IPtProxy.startSnowflake(stunServers, target, front, ampCache, null, null, null, false, false);
-        IPtProxy.startSnowflake(
-                stunServers, // String ice,
-                target, //String url,
-                front, // String fronts,
-                null, // ampCache, // String ampCache,
-                null, // String sqsQueueURL,
-                null, // String sqsCredsStr,
-                null, // String logFile,
-                false, // boolean logToStateDir,
-                false, // boolean keepLocalAddresses,
-                false, // boolean unsafeLogging,
-                1 // long maxPeers
-        );
-
-//        List<String> bridgeLines = Arrays.asList(
-//                // NOTICE: you'll need to provide bridge lines to make this work!
-//                "snowflake 192.0.2.3:80 2B280B23E1107BB62ABFC40DDCC8824814F80A72 fingerprint=2B280B23E1107BB62ABFC40DDCC8824814F80A72 url=https://snowflake-broker.torproject.net.global.prod.fastly.net/ front=github.githubassets.com ice=stun:stun.l.google.com:19302,stun:stun.antisip.com:3478,stun:stun.bluesip.net:3478,stun:stun.dus.net:3478,stun:stun.epygi.com:3478,stun:stun.sonetel.com:3478,stun:stun.uls.co.za:3478,stun:stun.voipgate.com:3478,stun:stun.voys.nl:3478 utls-imitate=hellorandomizedalpn",
-//                "snowflake 192.0.2.4:80 8838024498816A039FCBBAB14E6F40A0843051FA fingerprint=8838024498816A039FCBBAB14E6F40A0843051FA url=https://snowflake-broker.torproject.net.global.prod.fastly.net/ front=github.githubassets.com ice=stun:stun.l.google.com:19302,stun:stun.antisip.com:3478,stun:stun.bluesip.net:3478,stun:stun.dus.net:3478,stun:stun.epygi.com:3478,stun:stun.sonetel.net:3478,stun:stun.uls.co.za:3478,stun:stun.voipgate.com:3478,stun:stun.voys.nl:3478 utls-imitate=hellorandomizedalpn"
+//        IPtProxy.startSnowflake(
+//                stunServers, // String ice,
+//                target, //String url,
+//                front, // String fronts,
+//                null, // ampCache, // String ampCache,
+//                null, // String sqsQueueURL,
+//                null, // String sqsCredsStr,
+//                null, // String logFile,
+//                false, // boolean logToStateDir,
+//                false, // boolean keepLocalAddresses,
+//                false, // boolean unsafeLogging,
+//                1 // long maxPeers
 //        );
-
-        // initialize and start ArtiProxy
-
-//        ArtiProxy artiProxy = ArtiProxy.Builder(this)
-//                // .setUnmanagedSnowflakeClientPort((int) IPtProxy.snowflakePort())
-//                .setBridgeLines(bridgeLines)
-//                .setSnowflakePort((int) IPtProxy.snowflakePort())
-//                .setLogListener((log) -> {Log.e("artilog", log);})
-//                .build();
-//        artiProxy.start();
     }
 
     public void connectTorDirect() {
@@ -88,14 +69,14 @@ public class App extends Application {
 
     public void connectWithLyrebird(int port, List<String> bridgeLines) {
         IPtProxy.startLyrebird("DEBUG", false, false, null);
-        List<String> bridgeLines2 = Arrays.asList(
-                // NOTICE: you'll need to provide bridge lines to make this work!
-                "obfs4 69.235.46.22:30913 F79914011EB368C94E58F6CCF8A55A92EFD5F496 cert=ZKLm+4biqgPIf/g1s3slv8jLSzIzLSXAHFOfBLqtrNvnTM6LVbxe/K8e8jJKiXwOpvkoDw iat-mode=0",
-                "obfs4 82.74.251.112:9449 628B95EEAE48758CBAA2812AE99E1AB5B3BE44D4 cert=i7tmgWvq4X2rncJz4FQsQWwkXiEWVE7Nvm1gffYn5ZlVsA0kBF6c/8041dTB4mi0TSShWA iat-mode=0"
-        );
+//        List<String> bridgeLines2 = Arrays.asList(
+//                // NOTICE: you'll need to provide bridge lines to make this work!
+//                "obfs4 69.235.46.22:30913 F79914011EB368C94E58F6CCF8A55A92EFD5F496 cert=ZKLm+4biqgPIf/g1s3slv8jLSzIzLSXAHFOfBLqtrNvnTM6LVbxe/K8e8jJKiXwOpvkoDw iat-mode=0",
+//                "obfs4 82.74.251.112:9449 628B95EEAE48758CBAA2812AE99E1AB5B3BE44D4 cert=i7tmgWvq4X2rncJz4FQsQWwkXiEWVE7Nvm1gffYn5ZlVsA0kBF6c/8041dTB4mi0TSShWA iat-mode=0"
+//        );
         ArtiProxy artiProxy = ArtiProxy.Builder(this)
                 .setObfs4Port(port)
-                .setBridgeLines(bridgeLines2)
+                .setBridgeLines(bridgeLines)
                 .setLogListener((log) -> {
                     Log.e("artilog", log);
                     App.logOutput(getApplicationContext(), log);

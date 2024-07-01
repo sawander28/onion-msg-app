@@ -12,19 +12,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.media.MediaCodec;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
-import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,15 +35,11 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
-import IPtProxy.IPtProxy;
-import info.guardianproject.arti.ArtiProxy;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,20 +47,25 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private ViewPropertyAnimator fabSpin;
     private Spinner spinner;
+    private ScrollView inputScrollView;
+    private LinearLayout inputLayout;
     private EditText bridgeLineInput;
     private EditText obfs4Port;
     private EditText stunServerInput;
     private EditText targetInput;
     private EditText frontInput;
     private TextView noSelection;
+    private Button addBridgeLine;
+    private List<EditText> bridgeLineList;
     private TextView connectionStatus;
-    private int selectedOption;
+    private SelectedPluggableTransport selectedOption;
     private TextView logOutput;
     private ScrollView logScrollView;
     private SwitchMaterial logLabel;
     private BroadcastReceiver logReceiver;
     private ConstraintLayout constraintLayout;
     private Button startButton;
+    private Button stopButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,11 +82,17 @@ public class MainActivity extends AppCompatActivity {
         fabSpin = fab.animate();
 
         startButton = findViewById(R.id.startButton);
-        startButton.setOnClickListener(view -> {
-            startArti();
-        });
+        startButton.setOnClickListener(view -> startArti());
+        stopButton = findViewById(R.id.stopButton);
+//        stopButton.setOnClickListener(v -> {
+//            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            startActivity(intent);
+//        });
 
         spinner = findViewById(R.id.spinner);
+        inputScrollView = findViewById(R.id.inputScrollView);
+        inputLayout = findViewById(R.id.inputFieldsContainer);
         bridgeLineInput = findViewById(R.id.bridgeLineInput);
         stunServerInput = findViewById(R.id.stunServerInput);
         targetInput = findViewById(R.id.targetInput);
@@ -90,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
         noSelection = findViewById(R.id.no_option_selected);
         connectionStatus = findViewById(R.id.status);
         obfs4Port = findViewById(R.id.obfs4Port);
+        addBridgeLine = findViewById(R.id.buttonAdd);
+        Button removeBridgeLine = findViewById(R.id.buttonRemove);
+        bridgeLineList = new ArrayList<>();
+        bridgeLineList.add(bridgeLineInput);
 
         logOutput = findViewById(R.id.logTextView);
         logScrollView = findViewById(R.id.logScrollView);
@@ -98,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         logLabel.setOnCheckedChangeListener((view, isChecked) -> {
             logScrollView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
+
         logReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -117,14 +132,19 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedOption = position;
-                onSelectionChanged(position); // get options
+                selectedOption = SelectedPluggableTransport.values()[position];
+                onSelectionChanged(selectedOption); // get options
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 // Do nothing
             }
         });
+
+        addBridgeLine.setOnClickListener(v -> addNewEditText());
+        removeBridgeLine.setOnClickListener(v -> removeEditText());
+        inputScrollView.getViewTreeObserver().addOnGlobalLayoutListener(()
+                -> inputScrollView.post(() -> inputScrollView.fullScroll(View.FOCUS_DOWN)));
     }
 
     @Override
@@ -133,39 +153,34 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(logReceiver);
     }
     private void appendLog(String text) {
-        logOutput.append(text + "\n");
+        logOutput.append(text);
         ScrollView scrollView = findViewById(R.id.logScrollView);
         scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
     }
 
     private void startArti() {
+//        stopButton.setEnabled(true);
+        textView.setText(R.string.intro_text);
         switch (selectedOption){
-            case 1:
+            case NO_PT:
                 ((App)getApplication()).connectTorDirect();
                 break;
-            case 2:
-                List<String> lyreBirdDridgeLines = Arrays.asList(
-                        // NOTICE: you'll need to provide bridge lines to make this work!
-                        //obfs4 69.235.46.22:30913 F79914011EB368C94E58F6CCF8A55A92EFD5F496 cert=ZKLm+4biqgPIf/g1s3slv8jLSzIzLSXAHFOfBLqtrNvnTM6LVbxe/K8e8jJKiXwOpvkoDw iat-mode=0
-                        //obfs4 82.74.251.112:9449 628B95EEAE48758CBAA2812AE99E1AB5B3BE44D4 cert=i7tmgWvq4X2rncJz4FQsQWwkXiEWVE7Nvm1gffYn5ZlVsA0kBF6c/8041dTB4mi0TSShWA iat-mode=0
-                        bridgeLineInput.getText().toString()
-                );
-                ((App) getApplication()).connectWithLyrebird(Integer.parseInt(obfs4Port.getText().toString()), lyreBirdDridgeLines);
+            case OBFS4:
+                List<String> lyreBirdBridgeLines = collectInputs();
+                if (lyreBirdBridgeLines.isEmpty()) break;
+                ((App) getApplication()).connectWithLyrebird(Integer.parseInt(obfs4Port.getText().toString()), lyreBirdBridgeLines);
                 break;
-            case 3:
+            case SNOWFLAKE:
                 String stunServers = stunServerInput.toString();
                 String target = targetInput.toString();
                 String front = frontInput.toString();
-                List<String> snowflakeBridgesLines = Arrays.asList(
-                        // NOTICE: you'll need to provide bridge lines to make this work!
-                        //obfs4 69.235.46.22:30913 F79914011EB368C94E58F6CCF8A55A92EFD5F496 cert=ZKLm+4biqgPIf/g1s3slv8jLSzIzLSXAHFOfBLqtrNvnTM6LVbxe/K8e8jJKiXwOpvkoDw iat-mode=0
-                        //obfs4 82.74.251.112:9449 628B95EEAE48758CBAA2812AE99E1AB5B3BE44D4 cert=i7tmgWvq4X2rncJz4FQsQWwkXiEWVE7Nvm1gffYn5ZlVsA0kBF6c/8041dTB4mi0TSShWA iat-mode=0
-                        bridgeLineInput.getText().toString()
-                );
+                List<String> snowflakeBridgesLines = collectInputs();
+                if (snowflakeBridgesLines.isEmpty()) break;
                 ((App) getApplication()).connectWithSnowflake(stunServers, target, front, snowflakeBridgesLines);
             default:
                 break;
         }
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -226,65 +241,135 @@ public class MainActivity extends AppCompatActivity {
         fab.setActivated(true);
     }
 
-    private void onSelectionChanged(int selection) {
+    private void addNewEditText() {
+        EditText newEditText = new EditText(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        // convert to dp for correct margins
+        Resources resources = this.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        int px = (int) (15 * (metrics.densityDpi / 160f));
+        params.setMarginStart(px);
+        params.setMarginEnd(px);
+        newEditText.setLayoutParams(params);
+
+        newEditText.setHint(R.string.enter_bridge_line);
+        newEditText.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03DAC5"))); // teal hex
+        newEditText.setSingleLine(true);
+
+        // Add the new EditText above the Add button
+        inputLayout.addView(newEditText, inputLayout.getChildCount() - 1);
+
+        // Add the new EditText to the list
+        bridgeLineList.add(newEditText);
+    }
+
+    private void removeEditText() {
+        int childCount = inputLayout.getChildCount();
+        if (childCount > 6) {
+            inputLayout.removeViewAt(childCount - 2);
+        }
+    }
+
+    private List<String> collectInputs() {
+        List<String> inputs = new ArrayList<>();
+        boolean matchFound;
+        for (EditText editText : bridgeLineList) {
+            String text = editText.getText().toString();
+            if(selectedOption == SelectedPluggableTransport.OBFS4) {
+                Pattern pattern = Pattern.compile("^obfs4 ", Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(text);
+                matchFound = matcher.find();
+            } else {
+                matchFound = true;
+            }
+            if(matchFound) {
+                inputs.add(editText.getText().toString());
+            } else {
+                textView.setText(R.string.syntax_err);
+                return new ArrayList<>();
+            }
+        }
+        return inputs;
+    }
+
+    private void onSelectionChanged(SelectedPluggableTransport s) {
         ConstraintSet constraintSet = new ConstraintSet();
 
-        switch (selection) {
-            case 0:
-                stunServerInput.setVisibility(View.GONE);
-                targetInput.setVisibility(View.GONE);
-                frontInput.setVisibility(View.GONE);
-                bridgeLineInput.setVisibility(View.GONE);
-                obfs4Port.setVisibility(View.GONE);
-                noSelection.setVisibility(View.VISIBLE);
-                logScrollView.setVisibility(View.GONE);
-                logLabel.setVisibility(View.GONE);
-                startButton.setEnabled(false);
-                fab.setEnabled(false);
+        switch (s) {
+            case NO_SELECTION:
+                setDefaultVisibilities();
                 constraintSet.clone(constraintLayout);
                 break;
-            case 1:
-                stunServerInput.setVisibility(View.GONE);
-                obfs4Port.setVisibility(View.GONE);
-                targetInput.setVisibility(View.GONE);
-                frontInput.setVisibility(View.GONE);
-                bridgeLineInput.setVisibility(View.GONE);
-                noSelection.setVisibility(View.GONE);
-                logLabel.setVisibility(View.VISIBLE);
-                startButton.setEnabled(true);
-                fab.setEnabled(true);
+            case NO_PT:
+                setDirectVisibilities();
                 constraintSet.clone(constraintLayout);
                 constraintSet.connect(logLabel.getId(), ConstraintSet.TOP, spinner.getId(), ConstraintSet.BOTTOM);
                 break;
-            case 2:
-                bridgeLineInput.setVisibility(View.VISIBLE);
-                obfs4Port.setVisibility(View.VISIBLE);
-                stunServerInput.setVisibility(View.GONE);
-                targetInput.setVisibility(View.GONE);
-                frontInput.setVisibility(View.GONE);
-                noSelection.setVisibility(View.GONE);
-                logLabel.setVisibility(View.VISIBLE);
-                startButton.setEnabled(true);
-                fab.setEnabled(true);
+            case OBFS4:
+                setLyrebirdVisibilities();
                 constraintSet.clone(constraintLayout);
-                constraintSet.connect(logLabel.getId(), ConstraintSet.TOP, bridgeLineInput.getId(), ConstraintSet.BOTTOM);
+                constraintSet.connect(logLabel.getId(), ConstraintSet.TOP, inputScrollView.getId(), ConstraintSet.BOTTOM);
                 break;
-            case 3:
-                bridgeLineInput.setVisibility(View.VISIBLE);
-                stunServerInput.setVisibility(View.VISIBLE);
-                targetInput.setVisibility(View.VISIBLE);
-                frontInput.setVisibility(View.VISIBLE);
-                noSelection.setVisibility(View.GONE);
-                obfs4Port.setVisibility(View.GONE);
-                logLabel.setVisibility(View.VISIBLE);
-                startButton.setEnabled(true);
-                fab.setEnabled(true);
+            case SNOWFLAKE:
+                setSnowflakeVisibilities();
                 constraintSet.clone(constraintLayout);
-                constraintSet.connect(logLabel.getId(), ConstraintSet.TOP, frontInput.getId(), ConstraintSet.BOTTOM);
+                constraintSet.connect(logLabel.getId(), ConstraintSet.TOP, inputScrollView.getId(), ConstraintSet.BOTTOM);
                 break;
         }
         constraintSet.applyTo(constraintLayout);
     }
 
+    private void setDefaultVisibilities() {
+        noSelection.setVisibility(View.VISIBLE);
+        logScrollView.setVisibility(View.GONE);
+        logLabel.setVisibility(View.GONE);
+        inputScrollView.setVisibility(View.GONE);
+        startButton.setEnabled(false);
+        fab.setEnabled(false);
+    }
 
+    private void setDirectVisibilities() {
+        stunServerInput.setVisibility(View.GONE);
+        obfs4Port.setVisibility(View.GONE);
+        targetInput.setVisibility(View.GONE);
+        frontInput.setVisibility(View.GONE);
+        bridgeLineInput.setVisibility(View.GONE);
+        noSelection.setVisibility(View.GONE);
+        logLabel.setVisibility(View.VISIBLE);
+        inputScrollView.setVisibility(View.GONE);
+        addBridgeLine.setVisibility(View.GONE);
+        startButton.setEnabled(true);
+        fab.setEnabled(true);
+    }
+
+    private void setLyrebirdVisibilities() {
+        bridgeLineInput.setVisibility(View.VISIBLE);
+        obfs4Port.setVisibility(View.VISIBLE);
+        stunServerInput.setVisibility(View.GONE);
+        targetInput.setVisibility(View.GONE);
+        frontInput.setVisibility(View.GONE);
+        noSelection.setVisibility(View.GONE);
+        logLabel.setVisibility(View.VISIBLE);
+        inputScrollView.setVisibility(View.VISIBLE);
+        addBridgeLine.setVisibility(View.VISIBLE);
+        startButton.setEnabled(true);
+        fab.setEnabled(true);
+    }
+
+    private void setSnowflakeVisibilities() {
+        bridgeLineInput.setVisibility(View.VISIBLE);
+        stunServerInput.setVisibility(View.VISIBLE);
+        targetInput.setVisibility(View.VISIBLE);
+        frontInput.setVisibility(View.VISIBLE);
+        noSelection.setVisibility(View.GONE);
+        obfs4Port.setVisibility(View.GONE);
+        logLabel.setVisibility(View.VISIBLE);
+        inputScrollView.setVisibility(View.VISIBLE);
+        addBridgeLine.setVisibility(View.VISIBLE);
+        startButton.setEnabled(true);
+        fab.setEnabled(true);
+    }
 }
