@@ -84,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
         startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(view -> startArti());
         stopButton = findViewById(R.id.stopButton);
+
+        // TODO: implement stop functionality
 //        stopButton.setOnClickListener(v -> {
 //            Intent intent = new Intent(MainActivity.this, MainActivity.class);
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -259,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
         newEditText.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03DAC5"))); // teal hex
         newEditText.setSingleLine(true);
 
-        // Add the new EditText above the Add button
+        // Add the new EditText above the add/remove buttons
         inputLayout.addView(newEditText, inputLayout.getChildCount() - 1);
 
         // Add the new EditText to the list
@@ -279,6 +281,8 @@ public class MainActivity extends AppCompatActivity {
         for (EditText editText : bridgeLineList) {
             String text = editText.getText().toString();
             if(selectedOption == SelectedPluggableTransport.OBFS4) {
+                // guidance needed: how detailed should I go with this regex? not sure how
+                // flexible port names can be
                 Pattern pattern = Pattern.compile("^obfs4 ", Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(text);
                 matchFound = matcher.find();

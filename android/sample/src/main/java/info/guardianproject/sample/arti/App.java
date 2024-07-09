@@ -69,11 +69,9 @@ public class App extends Application {
 
     public void connectWithLyrebird(int port, List<String> bridgeLines) {
         IPtProxy.startLyrebird("DEBUG", false, false, null);
-//        List<String> bridgeLines2 = Arrays.asList(
-//                // NOTICE: you'll need to provide bridge lines to make this work!
-//                "obfs4 69.235.46.22:30913 F79914011EB368C94E58F6CCF8A55A92EFD5F496 cert=ZKLm+4biqgPIf/g1s3slv8jLSzIzLSXAHFOfBLqtrNvnTM6LVbxe/K8e8jJKiXwOpvkoDw iat-mode=0",
-//                "obfs4 82.74.251.112:9449 628B95EEAE48758CBAA2812AE99E1AB5B3BE44D4 cert=i7tmgWvq4X2rncJz4FQsQWwkXiEWVE7Nvm1gffYn5ZlVsA0kBF6c/8041dTB4mi0TSShWA iat-mode=0"
-//        );
+//      sample bridge lines:
+//      "obfs4 69.235.46.22:30913 F79914011EB368C94E58F6CCF8A55A92EFD5F496 cert=ZKLm+4biqgPIf/g1s3slv8jLSzIzLSXAHFOfBLqtrNvnTM6LVbxe/K8e8jJKiXwOpvkoDw iat-mode=0",
+//      "obfs4 82.74.251.112:9449 628B95EEAE48758CBAA2812AE99E1AB5B3BE44D4 cert=i7tmgWvq4X2rncJz4FQsQWwkXiEWVE7Nvm1gffYn5ZlVsA0kBF6c/8041dTB4mi0TSShWA iat-mode=0"
         ArtiProxy artiProxy = ArtiProxy.Builder(this)
                 .setObfs4Port(port)
                 .setBridgeLines(bridgeLines)
@@ -101,9 +99,7 @@ public class App extends Application {
                 );
 
         ArtiProxy artiProxy = ArtiProxy.Builder(this)
-                // .setUnmanagedSnowflakeClientPort((int) IPtProxy.snowflakePort())
-                //.setObfs4Port()
-                //.setBridgeLines()
+                .setBridgeLines(bridgeLines)
                 .setSnowflakePort((int) IPtProxy.snowflakePort())
                 .setLogListener((log) -> {
                     Log.e("artilog", log);
