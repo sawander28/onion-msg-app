@@ -5,11 +5,11 @@ edition = "2018"
 
 
 [dependencies]
-arti = { version = "= 1.2.2", features = ["static", "pt-client", "experimental-api"]}
-arti-client = { version = "= 0.18.0", features = ["static", "pt-client"]}
-tor-config = { version = "= 0.18.0" }
-tor-rtcompat = { version = "= 0.18.0", features = ["static", "async-std"]}
-tor-linkspec = { version = "= 0.18.0"}
+arti = { version = "= 1.2.5", features = ["static", "pt-client", "experimental-api"]}
+arti-client = { version = "= 0.20.0", features = ["static", "pt-client"]}
+tor-config = { version = "= 0.20.0" }
+tor-rtcompat = { version = "= 0.20.0", features = ["static", "async-std"]}
+tor-linkspec = { version = "= 0.20.0"}
 
 
 # helpers
