@@ -1,11 +1,20 @@
 #![allow(non_snake_case)]
 
-use crate::start_arti_proxy;
+use crate::{start_arti_proxy, stop_arti_proxy};
 use std::sync::Arc;
 
 use jni::objects::{AutoLocal, JClass, JObject, JString, JValue};
 use jni::sys::{jint, jstring};
 use jni::{Executor, JNIEnv};
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_stopArtiProxyJNI<'local>(
+    mut env: JNIEnv<'local>,
+    _class: JClass<'local>,
+) {
+    stop_arti_proxy();
+}
 
 /// Create a static method myMethod on class net.example.MyClass
 #[no_mangle]

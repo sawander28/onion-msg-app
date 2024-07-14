@@ -127,6 +127,10 @@ where
     }
 }
 
+fn stop_arti_proxy() {
+    panic!("stop not implemented");
+}
+
 /// Expose the JNI interface for Android
 #[cfg(target_os = "android")]
 pub mod android;

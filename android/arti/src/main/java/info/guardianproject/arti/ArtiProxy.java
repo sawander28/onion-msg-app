@@ -96,7 +96,7 @@ public class ArtiProxy {
                 obfs4Port,
                 snowflakePort,
                 null,
-                bridgeLines,  // TODO support multiple
+                bridgeLines,
                 socksPort,
                 dnsPort,
                 logLine -> logCallback.log(logLine)
@@ -104,7 +104,7 @@ public class ArtiProxy {
     }
 
     public void stop() {
-        // TODO: implement stop, once there's easy support in Arti
+        ArtiJNI.stopArtiProxyJNI();
     }
 
     public static ArtiProxyBuilder Builder(Context context) {

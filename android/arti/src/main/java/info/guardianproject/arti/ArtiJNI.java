@@ -19,4 +19,7 @@ class ArtiJNI {
             int socksPort,
             int dnsPort,
             ArtiLogListener loggingCallback);
+
+
+    static native void stopArtiProxyJNI();
 }
