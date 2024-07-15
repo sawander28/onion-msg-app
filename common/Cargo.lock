@@ -273,6 +273,7 @@ dependencies = [
  "anyhow",
  "arti",
  "arti-client",
+ "futures",
  "jni",
  "libc",
  "tor-config",
