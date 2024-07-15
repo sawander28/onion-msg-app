@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">Arti Sample</string>
+    <string name="intro_text">Welcome to the Arti for Android sample project!
+                Through this basic sample app, we will show you how to integrate
+                Arti (Tor in Rust) into your app. Choose how you want to connect below: </string>
+    <string name="performing_request">performing request ...</string>
+    <string name="tor_no_arti">⚠ connected to check.torproject.org without arti</string>
+    <string name="tor_with_arti">✅ connected to check.torproject.org using arti</string>
+    <string name="connection_failed">"⛔ connecting failed"</string>
+    <string name="enter_snowflake_target">Enter Snowflake target</string>
+    <string name="enter_stun_servers">Enter stun servers</string>
+    <string name="enter_snowflake_front">Enter Snowflake front</string>
+    <string name="enter_bridge_line">Enter bridge line</string>
+    <string name="please_select_a_valid_option">Please select a valid option</string>
+    <string name="enter_obfs4_port">Enter obfs4 port</string>
+    <string name="artilog_output">Artilog Output</string>
+    <string name="stop">stop</string>
+    <string name="start">Start</string>
+    <string name="plus">+</string>
+    <string name="add_bridge_line">Add bridge line</string>
+    <string name="remove_bridge_line">Remove bridge line</string>
+    <string name="syntax_err">At least one of your bridge does not match the expected syntaxt, please try again</string>
+    <string-array name="connection_options">
+        <item>Select Pluggable Transport</item>
+        <item>Tor Direct (no PT)</item>
+        <item>Lyrebird/Obfs4</item>
+        <item>Snowflake</item>
+    </string-array>
 </resources>
