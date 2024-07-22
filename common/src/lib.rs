@@ -1,15 +1,15 @@
 use anyhow::Result;
-use tracing::{info, warn};
 use std::net::SocketAddr;
 use std::sync::Arc;
 use tor_linkspec::TransportIdError;
+use tracing::{info, warn};
 
 use std::thread;
 
 use arti::{dns, exit, reload_cfg, socks, ArtiConfig};
-use arti_client::{TorClient, TorClientConfig};
-use arti_client::config::{PtTransportName, TorClientConfigBuilder};
 use arti_client::config::pt::TransportConfigBuilder;
+use arti_client::config::{PtTransportName, TorClientConfigBuilder};
+use arti_client::{TorClient, TorClientConfig};
 use tor_config::{CfgPath, ConfigurationSources, Listen};
 use tor_rtcompat::{BlockOn, PreferredRuntime, Runtime};
 
@@ -31,10 +31,40 @@ fn start_arti_proxy<F>(
 where
     F: Fn(&[u8]) + Send + Sync + 'static,
 {
+    _inti_log_subscriber(log_fn);
+    _configure_and_run_arti_proxy(
+        cache_dir,
+        state_dir,
+        obfs4_port,
+        snowflake_port,
+        obfs4proxy_path,
+        bridge_lines,
+        socks_port,
+        dns_port,
+    );
+
+    Ok("arti-mobile-ex proxy init".to_owned())
+}
+
+fn _inti_log_subscriber<F>(log_fn: F)
+where
+    F: Fn(&[u8]) + Send + Sync + 'static,
+{
     let log_fn = Arc::new(log_fn);
     let log = Layer::new().with_writer(move || CallbackWriter::new(log_fn.clone()));
     Subscriber::builder().finish().with(log).init();
+}
 
+fn _configure_and_run_arti_proxy(
+    cache_dir: &str,
+    state_dir: &str,
+    obfs4_port: u16,
+    snowflake_port: u16,
+    obfs4proxy_path: Option<&str>,
+    bridge_lines: Option<&str>,
+    socks_port: u16,
+    dns_port: u16,
+) {
     let runtime = PreferredRuntime::create().expect("Could not create Tor runtime.");
     let config_sources = ConfigurationSources::default();
     let arti_config = ArtiConfig::default();
@@ -97,8 +127,6 @@ where
             ))
             .expect("Could not start Arti.");
     });
-
-    Ok("arti-mobile-ex proxy init".to_owned())
 }
 
 /// Shorthand for a boxed and pinned Future.
@@ -224,7 +252,6 @@ async fn run<R: Runtime>(
     }
     use anyhow::Context;
 
-
     let proxy = futures::future::select_all(proxy).map(|(finished, _index, _others)| finished);
     futures::select!(
         r = exit::wait_for_ctrl_c().fuse()
@@ -244,9 +271,6 @@ async fn run<R: Runtime>(
 
     Ok(())
 }
-
-
-
 
 #[derive(Clone)]
 struct CallbackWriter<F> {
