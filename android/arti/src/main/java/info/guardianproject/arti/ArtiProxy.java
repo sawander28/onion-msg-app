@@ -8,6 +8,7 @@ import androidx.webkit.WebViewFeature;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -99,11 +100,12 @@ public class ArtiProxy {
                 bridgeLines,
                 socksPort,
                 dnsPort,
-                logLine -> logCallback.log(logLine)
+                logLine -> mainLogListener.log(logLine)
         );
     }
 
     public void stop() {
+        logListeners.remove(this.logCallback);
         ArtiJNI.stopArtiProxyJNI();
     }
 
@@ -267,15 +269,32 @@ public class ArtiProxy {
             }
             stateDir.mkdirs();
 
-            if (logListener == null) {
-                // Create empty callback if nothing was registered, so so the arti jni
-                // implementation always has an object to call and never has to worry that it's not
-                // initialized. This implementation just ignores all logLines sent from arti.
-                logListener = logLine -> {
-                };
+            if (logListener != null) {
+                logListeners.add(logListener);
             }
 
             return new ArtiProxy(this);
         }
     }
+
+    /**
+     * List of consumer log callback listeners used by mainLogListener for tracking callback
+     * consumers.
+     */
+    private static final List<ArtiLogListener> logListeners = Collections.synchronizedList(new ArrayList<>());
+    /**
+     * Central internal log callback object. On the rust side we've registered a "global default
+     * trace dispatcher". We re-register for a second time it panics. So for supporting multiple
+     * log callback consumers, we use this central callback object for multiplexing log events.
+     */
+    private static ArtiLogListener mainLogListener = new ArtiLogListener() {
+        @Override
+        public void log(String logLine) {
+            synchronized (logListeners) {
+                for (ArtiLogListener logListener : logListeners) {
+                    logListener.log(logLine);
+                }
+            }
+        }
+    };
 }
