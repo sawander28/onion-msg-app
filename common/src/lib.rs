@@ -1,6 +1,6 @@
 use anyhow::Result;
 use std::net::SocketAddr;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use tor_linkspec::TransportIdError;
 use tracing::{info, warn};
 
@@ -17,6 +17,26 @@ use tracing_subscriber::fmt::{Layer, Subscriber};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
+#[macro_use]
+extern crate lazy_static;
+
+// TODO: look into
+//   - https://crates.io/crates/lazy_static
+//   - https://doc.rust-lang.org/std/sync/struct.Mutex.html
+// for sharing data between threads/functions
+
+lazy_static! {
+    static ref STATE: Mutex<AMExState> = Mutex::new(AMExState::Uninitialized);
+}
+
+enum AMExState {
+    Uninitialized,
+    Starting,
+    Running,
+    Stopping,
+    Stopped,
+}
+
 fn start_arti_proxy<F>(
     cache_dir: &str,
     state_dir: &str,
@@ -31,7 +51,7 @@ fn start_arti_proxy<F>(
 where
     F: Fn(&[u8]) + Send + Sync + 'static,
 {
-    _inti_log_subscriber(log_fn);
+    _init_log_subscriber(log_fn);
     _configure_and_run_arti_proxy(
         cache_dir,
         state_dir,
@@ -46,13 +66,20 @@ where
     Ok("arti-mobile-ex proxy init".to_owned())
 }
 
-fn _inti_log_subscriber<F>(log_fn: F)
+fn _init_log_subscriber<F>(log_fn: F)
 where
     F: Fn(&[u8]) + Send + Sync + 'static,
 {
-    let log_fn = Arc::new(log_fn);
-    let log = Layer::new().with_writer(move || CallbackWriter::new(log_fn.clone()));
-    Subscriber::builder().finish().with(log).init();
+    if let Ok(mut state) = STATE.lock() {
+        if let AMExState::Uninitialized = *state {
+            let log_fn = Arc::new(log_fn);
+            let log = Layer::new().with_writer(move || CallbackWriter::new(log_fn.clone()));
+            Subscriber::builder().finish().with(log).init();
+            info!("AMEx: logging initialized");
+        } else {
+            info!("AMEx: logging already initialied");
+        }
+    }
 }
 
 fn _configure_and_run_arti_proxy(

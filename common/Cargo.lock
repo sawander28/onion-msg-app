@@ -275,6 +275,7 @@ dependencies = [
  "arti-client",
  "futures",
  "jni",
+ "lazy_static",
  "libc",
  "tor-config",
  "tor-linkspec",
