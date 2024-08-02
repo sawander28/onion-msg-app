@@ -105,7 +105,9 @@ public class ArtiProxy {
     }
 
     public void stop() {
-        logListeners.remove(this.logCallback);
+        // TODO: this would turn of log output, so uncommenting for now. Should be
+        // refactored so that it's independent of start/stop
+        // logListeners.remove(this.logCallback);
         ArtiJNI.stopArtiProxyJNI();
     }
 

@@ -273,6 +273,7 @@ dependencies = [
  "anyhow",
  "arti",
  "arti-client",
+ "async-std",
  "futures",
  "jni",
  "lazy_static",
