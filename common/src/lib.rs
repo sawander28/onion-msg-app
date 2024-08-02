@@ -344,7 +344,7 @@ async fn _run<R: Runtime>(
 
             loop {
                 sleep(Duration::from_millis(200)).await;
-                if let Ok(mut state) = STATE.lock() {
+                if let Ok(state) = STATE.lock() {
                     if let AMExState::Stopping = *state {
                         info!("AMEx: Stopping requst detected, stopping proxy");
                         break;

@@ -10,7 +10,7 @@ use jni::{Executor, JNIEnv};
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_stopArtiProxyJNI<'local>(
-    mut env: JNIEnv<'local>,
+    _env: JNIEnv<'local>,
     _class: JClass<'local>,
 ) {
     stop_arti_proxy();
