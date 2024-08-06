@@ -85,12 +85,9 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(view -> startArti());
         stopButton = findViewById(R.id.stopButton);
 
-        // TODO: implement stop functionality
-//        stopButton.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, MainActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//            startActivity(intent);
-//        });
+        stopButton.setOnClickListener(v -> {
+            ((App)getApplication()).stopArti();
+        });
 
         spinner = findViewById(R.id.spinner);
         inputScrollView = findViewById(R.id.inputScrollView);
@@ -331,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
         logScrollView.setVisibility(View.GONE);
         logLabel.setVisibility(View.GONE);
         inputScrollView.setVisibility(View.GONE);
-        startButton.setEnabled(false);
+      //  startButton.setEnabled(false);
         fab.setEnabled(false);
     }
 
@@ -345,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
         logLabel.setVisibility(View.VISIBLE);
         inputScrollView.setVisibility(View.GONE);
         addBridgeLine.setVisibility(View.GONE);
-        startButton.setEnabled(true);
+    //    startButton.setEnabled(true);
         fab.setEnabled(true);
     }
 
@@ -359,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
         logLabel.setVisibility(View.VISIBLE);
         inputScrollView.setVisibility(View.VISIBLE);
         addBridgeLine.setVisibility(View.VISIBLE);
-        startButton.setEnabled(true);
+    //    startButton.setEnabled(true);
         fab.setEnabled(true);
     }
 
@@ -373,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
         logLabel.setVisibility(View.VISIBLE);
         inputScrollView.setVisibility(View.VISIBLE);
         addBridgeLine.setVisibility(View.VISIBLE);
-        startButton.setEnabled(true);
+    //    startButton.setEnabled(true);
         fab.setEnabled(true);
     }
 }

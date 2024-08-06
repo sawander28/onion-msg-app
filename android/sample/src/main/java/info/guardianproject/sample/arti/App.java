@@ -19,6 +19,9 @@ import IPtProxy.IPtProxy;
 import info.guardianproject.arti.ArtiProxy;
 
 public class App extends Application {
+
+    private ArtiProxy mArtiProxy;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -56,7 +59,7 @@ public class App extends Application {
     }
 
     public void connectTorDirect() {
-        ArtiProxy artiProxy = ArtiProxy.Builder(this)
+        mArtiProxy = ArtiProxy.Builder(this)
                 // .setUnmanagedSnowflakeClientPort((int) IPtProxy.snowflakePort())
 //                .setSnowflakePort((int) IPtProxy.snowflakePort())
                 .setLogListener((log) -> {
@@ -64,7 +67,8 @@ public class App extends Application {
                     App.logOutput(getApplicationContext(), log + "\n");
                 })
                 .build();
-        artiProxy.start();
+        mArtiProxy.start();
+
     }
 
     public void connectWithLyrebird(int port, List<String> bridgeLines) {
@@ -72,7 +76,7 @@ public class App extends Application {
 //      sample bridge lines:
 //      "obfs4 69.235.46.22:30913 F79914011EB368C94E58F6CCF8A55A92EFD5F496 cert=ZKLm+4biqgPIf/g1s3slv8jLSzIzLSXAHFOfBLqtrNvnTM6LVbxe/K8e8jJKiXwOpvkoDw iat-mode=0",
 //      "obfs4 82.74.251.112:9449 628B95EEAE48758CBAA2812AE99E1AB5B3BE44D4 cert=i7tmgWvq4X2rncJz4FQsQWwkXiEWVE7Nvm1gffYn5ZlVsA0kBF6c/8041dTB4mi0TSShWA iat-mode=0"
-        ArtiProxy artiProxy = ArtiProxy.Builder(this)
+        mArtiProxy = ArtiProxy.Builder(this)
                 .setObfs4Port(port)
                 .setBridgeLines(bridgeLines)
                 .setLogListener((log) -> {
@@ -80,7 +84,8 @@ public class App extends Application {
                     App.logOutput(getApplicationContext(), log);
                 })
                 .build();
-        artiProxy.start();
+        mArtiProxy.start();
+
     }
     public void connectWithSnowflake(String stunServers, String target, String front,
                                      List<String> bridgeLines) {
@@ -98,7 +103,7 @@ public class App extends Application {
                 1 // long maxPeers
                 );
 
-        ArtiProxy artiProxy = ArtiProxy.Builder(this)
+        mArtiProxy = ArtiProxy.Builder(this)
                 .setBridgeLines(bridgeLines)
                 .setSnowflakePort((int) IPtProxy.snowflakePort())
                 .setLogListener((log) -> {
@@ -106,9 +111,13 @@ public class App extends Application {
                     App.logOutput(getApplicationContext(), log);
                 })
                 .build();
-        artiProxy.start();
+        mArtiProxy.start();
     }
 
+    public void stopArti () {
+        if (mArtiProxy != null)
+            mArtiProxy.stop();
+    }
 
     public static void logOutput(Context context, String logMessage) {
         Intent intent = new Intent("LOG_MESSAGE");
