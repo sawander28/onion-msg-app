@@ -170,9 +170,9 @@ public class MainActivity extends AppCompatActivity {
                 ((App) getApplication()).connectWithLyrebird(Integer.parseInt(obfs4Port.getText().toString()), lyreBirdBridgeLines);
                 break;
             case SNOWFLAKE:
-                String stunServers = stunServerInput.toString();
-                String target = targetInput.toString();
-                String front = frontInput.toString();
+                String stunServers = stunServerInput.getText().toString();
+                String target = targetInput.getText().toString();
+                String front = frontInput.getText().toString();
                 List<String> snowflakeBridgesLines = collectInputs();
                 if (snowflakeBridgesLines.isEmpty()) break;
                 ((App) getApplication()).connectWithSnowflake(stunServers, target, front, snowflakeBridgesLines);
