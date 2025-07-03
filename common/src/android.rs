@@ -7,7 +7,7 @@ use jni::objects::{AutoLocal, JClass, JObject, JString, JValue};
 use jni::sys::{jint, jstring};
 use jni::{Executor, JNIEnv};
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 #[allow(non_snake_case)]
 pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_stopArtiProxyJNI<'local>(
     _env: JNIEnv<'local>,
@@ -17,7 +17,7 @@ pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_stopArtiProxyJNI<'
 }
 
 /// Create a static method myMethod on class net.example.MyClass
-#[no_mangle]
+#[unsafe(no_mangle)]
 #[allow(non_snake_case)]
 pub extern "system" fn Java_info_guardianproject_arti_ArtiJNI_startArtiProxyJNI<'local>(
     mut env: JNIEnv<'local>,

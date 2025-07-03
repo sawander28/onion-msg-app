@@ -5,27 +5,19 @@ ANDROID_TARGETS := \
 	aarch64-linux-android \
 	i686-linux-android \
 	x86_64-linux-android
-IOS_TARGETS := \
-	aarch64-apple-ios \
-	aarch64-apple-ios-sim \
-	x86_64-apple-ios
-MACOS_TARGETS := \
-	aarch64-apple-darwin \
-	x86_64-apple-darwin
 FILENAME := libarti_mobile_ex.a
 
-export NDK_HOME=${current_dir}cache/ndk/android-ndk-r26b/
-export ANDROID_NDK_HOME=${NDK_HOME}
+export ANDROID_NDK_HOME=${current_dir}cache/ndk/android-ndk-r26b/
 
 # https://stackoverflow.com/questions/75943717/error-building-rust-project-for-android-flutter-arm-linux-androideabi-ranlib
 ifeq ($(shell uname), Darwin)
-	export TOOLCHAIN=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/darwin-x86_64
+	export TOOLCHAIN=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64
 	export RANLIB=${TOOLCHAIN}/bin/llvm-ranlib
 endif
 
 all: release
-release: android ios macos
-debug: android-debug ios-debug macos-debug
+release: android
+debug: android-debug
 
 android: android-release
 
@@ -53,16 +45,6 @@ info_guardianproject_arti_ArtiJNI.h:
 		-classpath ../android/arti/src/main/java/ \
 		../android/arti/src/main/java/info/guardianproject/arti/ArtiJNI.java
 	find ../android/arti/src/main/java -name "*.class" | xargs rm
-
-ios: ios-release
-
-ios-debug: lipo-ios-debug ios-debug-aarch64-apple-ios
-ios-release: ios-release-aarch64-apple-ios #Simulator is never released, so don't build these targets.
-
-macos: macos-release
-
-macos-debug: lipo-macos-debug
-macos-release: lipo-macos-release
 
 arti-mobile.h:
 	cbindgen src/apple.rs -l c > arti-mobile.h
@@ -99,13 +81,8 @@ clean-all: clean
 
 android-install-deps: cache/ndk/android-ndk-r26b cargo-ndk android-targets
 
-ios-install-deps: ios-targets cbindgen
-
-macos-install-deps: macos-targets cbindgen
-
 cache/ndk/android-ndk-r26b: cache/ndk.zip
-	unzip -n -d cache/ndk cache/ndk.zip
-	touch cache/ndk.zip #MacOS' unzip might delete the zip file, so recreate an empty file to calm make.
+	bsdunzip cache/ndk.zip -C cache
 
 cache/ndk.zip:
 	mkdir -p cache

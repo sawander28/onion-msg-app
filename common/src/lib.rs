@@ -1,5 +1,6 @@
 use anyhow::{anyhow, Result};
 use async_std::task::sleep;
+use tor_rtcompat::PreferredRuntime;
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -9,11 +10,11 @@ use tracing::{info, warn};
 
 use arti::{dns, exit, reload_cfg, socks, ArtiConfig};
 use arti_client::config::pt::TransportConfigBuilder;
+use arti_client::config::CfgPath;
 use arti_client::config::{PtTransportName, TorClientConfigBuilder};
 use arti_client::{TorClient, TorClientConfig};
-use tor_config::{CfgPath, ConfigurationSources, Listen};
-use tor_rtcompat::{BlockOn, PreferredRuntime, Runtime};
-
+use tor_config::{ConfigurationSources, Listen};
+use tor_rtcompat::{ToplevelBlockOn, Runtime};
 use tracing_subscriber::fmt::{Layer, Subscriber};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
@@ -124,8 +125,7 @@ fn _configure_and_run_arti_proxy(
         info!("AMEx: could not lock state, aborting _configure_and_run_arti_proxy()");
         return;
     }
-
-    let runtime = PreferredRuntime::create().expect("Could not create Tor runtime.");
+    let runtime = PreferredRuntime::current().expect("Could not create Tor runtime.");
     let config_sources = ConfigurationSources::default();
     let arti_config = ArtiConfig::default();
     let mut client_config_builder = TorClientConfigBuilder::from_directories(state_dir, cache_dir);
@@ -303,12 +303,9 @@ async fn _run<R: Runtime>(
                 runtime,
                 client,
                 socks_listen,
-                // #[cfg(all(feature = "rpc", feature = "tokio"))]
-                // rpc_mgr,
-            )
-            .await;
-            (res, "SOCKS")
-        }));
+                None,
+            ).await;
+          (res, "SOCKS") }));
     }
 
     // #[cfg(feature = "dns-proxy")]
@@ -407,9 +404,4 @@ fn stop_arti_proxy() {
 }
 
 /// Expose the JNI interface for Android
-#[cfg(target_os = "android")]
-pub mod android;
-
-/// Expose the native interface for iOS
-#[cfg(any(target_os = "ios", target_os = "macos"))]
-pub mod apple;
+#[cfg(target_os = "android")]pub mod android;
