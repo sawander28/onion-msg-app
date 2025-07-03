@@ -7,13 +7,11 @@ ANDROID_TARGETS := \
 	x86_64-linux-android
 FILENAME := libarti_tor.a
 
-export ANDROID_NDK_HOME=${current_dir}cache/ndk/android-ndk-r26b/
 
-# https://stackoverflow.com/questions/75943717/error-building-rust-project-for-android-flutter-arm-linux-androideabi-ranlib
-ifeq ($(shell uname), Darwin)
-	export TOOLCHAIN=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64
-	export RANLIB=${TOOLCHAIN}/bin/llvm-ranlib
-endif
+export ANDROID_NDK_HOME=${HOME}/android/ndk/android-ndk-r26b/
+export TOOLCHAIN=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64
+export RANLIB=${TOOLCHAIN}/bin/llvm-ranlib
+
 
 all: release
 release: android
@@ -47,27 +45,6 @@ info_guardianproject_arti_ArtiJNI.h:
 	find ../android/arti/src/main/java -name "*.class" | xargs rm
 
 
-# Args:
-# $1: OS name
-# $2: Rust target name
-# $3: Release mode
-define apple-build-rules
-
-$(1)-$(3)-$(2): $(1)-install-deps arti-mobile.h
-ifeq ($(3), release)
-	cargo build --target $(2) --release
-else
-	cargo build --target $(2)
-endif
-
-.PHONY: $(1)-$(3)-$(2)
-endef
-
-$(foreach target, $(IOS_TARGETS), $(eval $(call apple-build-rules,ios,$(target),debug)))
-$(foreach target, $(IOS_TARGETS), $(eval $(call apple-build-rules,ios,$(target),release)))
-$(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(target),debug)))
-$(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(target),release)))
-
 clean:
 	cargo clean
 	cargo uninstall cargo-ndk
@@ -77,9 +54,9 @@ clean:
 clean-all: clean
 	-rm -rf cache/ndk cache/ndk.zip
 
-android-install-deps: cache/ndk/android-ndk-r26b cargo-ndk android-targets
+android-install-deps: android-ndk-r26b cargo-ndk android-targets
 
-cache/ndk/android-ndk-r26b: cache/ndk.zip
+android-ndk-r26b: cache/ndk.zip
 	bsdunzip cache/ndk.zip -C cache
 
 cache/ndk.zip:

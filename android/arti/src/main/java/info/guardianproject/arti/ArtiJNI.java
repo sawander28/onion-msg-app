@@ -6,7 +6,7 @@ package info.guardianproject.arti;
 class ArtiJNI {
 
     static {
-        System.loadLibrary("arti_mobile_ex");
+        System.loadLibrary("arti_tor");
     }
 
     static native String startArtiProxyJNI(
