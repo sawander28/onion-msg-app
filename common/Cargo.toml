@@ -1,5 +1,5 @@
 [package]
-name = "arti-messenger"
+name = "arti-tor"
 version = "0.1.0"
 edition = "2024"
 
@@ -25,11 +25,6 @@ tracing = "0.1.40"
 tracing-appender = "0.2.3"
 
 
-# dependancies specific to iOS
-[target.'cfg(any(target_os = "ios", target_os = "macos"))'.dependencies]
-tracing-oslog = "0.1.2"
-
-
 # dependancies specific to Android
 [target.'cfg(target_os = "android")'.dependencies]
 # the java native interface
@@ -40,6 +35,5 @@ libc = "0.2.112"
 
 
 [lib]
-name = "arti_mobile_ex"
-# dylib is for Android, staticlib is for iOS/macOS
-crate-type = ["dylib", "staticlib"]
+name = "arti_tor"
+crate-type = ["dylib"]

@@ -5,7 +5,7 @@ ANDROID_TARGETS := \
 	aarch64-linux-android \
 	i686-linux-android \
 	x86_64-linux-android
-FILENAME := libarti_mobile_ex.a
+FILENAME := libarti_tor.a
 
 export ANDROID_NDK_HOME=${current_dir}cache/ndk/android-ndk-r26b/
 
@@ -46,8 +46,6 @@ info_guardianproject_arti_ArtiJNI.h:
 		../android/arti/src/main/java/info/guardianproject/arti/ArtiJNI.java
 	find ../android/arti/src/main/java -name "*.class" | xargs rm
 
-arti-mobile.h:
-	cbindgen src/apple.rs -l c > arti-mobile.h
 
 # Args:
 # $1: OS name
@@ -72,7 +70,7 @@ $(foreach target, $(MACOS_TARGETS), $(eval $(call apple-build-rules,macos,$(targ
 
 clean:
 	cargo clean
-	cargo uninstall cargo-ndk  # make sure we have a intuitive way to recover from broken builds due to oudated cargo-ndk
+	cargo uninstall cargo-ndk
 	rm -f arti-mobile.h
 	-rm -rf ../android/arti/src/main/jniLibs
 
@@ -103,11 +101,6 @@ ifeq ($(shell command -v cargo-ndk),)
 	cargo install cargo-ndk
 endif
 
-cbindgen:
-ifeq ($(shell command -v cbindgen),)
-	cargo install cbindgen
-endif
-
 # Args:
 # $1: Rust target name
 # $2: OS name
@@ -125,34 +118,6 @@ endef
 android-targets:
 $(foreach target, $(ANDROID_TARGETS), $(eval $(call target-rules,$(target),android)))
 
-ios-targets:
-$(foreach target, $(IOS_TARGETS), $(eval $(call target-rules,$(target),ios)))
-
-macos-targets:
-$(foreach target, $(MACOS_TARGETS), $(eval $(call target-rules,$(target),macos)))
-
-# Args:
-# $1: OS name
-# $2: Release mode
-# $3: Rust target name 1
-# $4: Rust target name 2
-define lipo-rules
-
-lipo-$(1)-$(2): $(1)-$(2)-$(3) $(1)-$(2)-$(4)
-ifeq (,$(wildcard target/universal-$(1)/$(2)/$(FILENAME)))
-	mkdir -p target/universal-$(1)/$(2)
-	lipo target/$(3)/$(2)/$(FILENAME) target/$(4)/$(2)/$(FILENAME) -create -output target/universal-$(1)/$(2)/$(FILENAME)
-endif
-
-.PHONY: lipo-$(1)-$(2)
-
-endef
-
-$(eval $(call lipo-rules,macos,debug,$(word 1,$(MACOS_TARGETS)),$(word 2,$(MACOS_TARGETS))))
-$(eval $(call lipo-rules,macos,release,$(word 1,$(MACOS_TARGETS)),$(word 2,$(MACOS_TARGETS))))
-$(eval $(call lipo-rules,ios,debug,$(word 2,$(IOS_TARGETS)),$(word 3,$(IOS_TARGETS))))
 
 .PHONY: android-install-deps cargo-ndk android-debug android-release android android-targets
-.PHONY: ios-install-deps cbindgen ios-debug ios-release ios ios-targets
-.PHONY: macos-install-deps macos-debug macos-release macos macos-targets
 .PHONY: all
