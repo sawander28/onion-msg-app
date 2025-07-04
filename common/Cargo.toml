@@ -3,7 +3,6 @@ name = "arti-tor"
 version = "0.1.0"
 edition = "2024"
 
-
 [dependencies]
 arti = { version = "= 1.4.4", features = ["static", "pt-client", "experimental-api"]}
 arti-client = { version = "= 0.31.0", features = ["static", "pt-client"]}
@@ -11,17 +10,19 @@ tor-config = { version = "= 0.31.0" }
 tor-rtcompat = { version = "= 0.31.0", features = ["static", "async-std", "tokio", "native-tls"]}
 tor-linkspec = { version = "= 0.31.0"}
 
-async-std = "1.10"
+libcwtch = "0.7.0"
+#cwtch-imp = "0.3.1"
+async-std = "1.13.1"
 
 # helpers
-anyhow = "1.0.79"
-futures = "0.3.14"
-lazy_static = "1.4.0"
+anyhow = "1.0.98"
+futures = "0.3.31"
+lazy_static = "1.5.0"
 
 
 # used to forward logs to system logger
-tracing-subscriber = "0.3.18"
-tracing = "0.1.40"
+tracing-subscriber = "0.3.19"
+tracing = "0.1.41"
 tracing-appender = "0.2.3"
 
 

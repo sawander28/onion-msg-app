@@ -54,7 +54,8 @@ clean:
 clean-all: clean
 	-rm -rf cache/ndk cache/ndk.zip
 
-android-install-deps: android-ndk-r26b cargo-ndk android-targets
+#android-install-deps: android-ndk-r26b cargo-ndk android-targets
+android-install-deps: cargo-ndk android-targets
 
 android-ndk-r26b: cache/ndk.zip
 	bsdunzip cache/ndk.zip -C cache
