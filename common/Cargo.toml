@@ -10,7 +10,7 @@ tor-config = { version = "= 0.31.0" }
 tor-rtcompat = { version = "= 0.31.0", features = ["static", "async-std", "tokio", "native-tls"]}
 tor-linkspec = { version = "= 0.31.0"}
 
-libcwtch = "0.7.0"
+#libcwtch = "0.7.0"
 #cwtch-imp = "0.3.1"
 async-std = "1.13.1"
 

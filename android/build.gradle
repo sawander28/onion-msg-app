@@ -10,12 +10,12 @@ task clean(type: Delete) {
 }
 
 ext {
-    versionName = "0.1.0"
-    LIBRARY_GROUP = "wandsas"
-    LIBRARY_ARTIFACT_ID = "arti.tor"
+    versionName = "1.1.0.1"
+    LIBRARY_GROUP = "info.guardianproject"
+    LIBRARY_ARTIFACT_ID = "arti-mobile-ex"
     LIBRARY_VERSION_NAME = versionName
-    LIBRARY_GIT_URL = "git@rpi3.lan:arti-messenger.git"
-    OSS_SIGNING_KEY_ID = "sascha.wander@onionmail.com"
-    OSS_SIGNING_KEY = "0x56303570E0D0B038"
+    LIBRARY_URL = "https://gitlab.com/guardianproject/arti-mobile-ex"
+    LIBRARY_GIT_URL = "https://gitlab.com/guardianproject/arti-mobile-ex.git"
+    OSS_SIGNING_KEY_ID = "nathan@guardianproject.info"
+    OSS_SIGNING_KEY = "0x123456"
 }
-

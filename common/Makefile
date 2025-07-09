@@ -8,7 +8,7 @@ ANDROID_TARGETS := \
 FILENAME := libarti_tor.a
 
 
-export ANDROID_NDK_HOME=${HOME}/android/ndk/android-ndk-r26b/
+export ANDROID_NDK_HOME=${HOME}/android/ndk/android-ndk-r26d
 export TOOLCHAIN=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64
 export RANLIB=${TOOLCHAIN}/bin/llvm-ranlib
 
@@ -54,10 +54,10 @@ clean:
 clean-all: clean
 	-rm -rf cache/ndk cache/ndk.zip
 
-#android-install-deps: android-ndk-r26b cargo-ndk android-targets
+#android-install-deps: android-ndk-r26d cargo-ndk android-targets
 android-install-deps: cargo-ndk android-targets
 
-android-ndk-r26b: cache/ndk.zip
+android-ndk-r26d: cache/ndk.zip
 	bsdunzip cache/ndk.zip -C cache
 
 cache/ndk.zip:
