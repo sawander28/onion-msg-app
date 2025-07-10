@@ -39,4 +39,9 @@ dependencies {
 }
 
 apply from: 'publishLocal.gradle'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
