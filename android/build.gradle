@@ -1,8 +1,8 @@
-
 plugins {
     id 'com.android.application' version '8.11.0' apply false
     id 'com.android.library' version '8.11.0' apply false
     id 'org.jetbrains.kotlin.android' version '2.2.0' apply false
+   id 'com.quittle.android-emulator' version '0.4.5'
 }
 
 task clean(type: Delete) {
@@ -18,4 +18,15 @@ ext {
     LIBRARY_GIT_URL = "https://gitlab.com/guardianproject/arti-mobile-ex.git"
     OSS_SIGNING_KEY_ID = "nathan@guardianproject.info"
     OSS_SIGNING_KEY = "0x123456"
+}
+
+task deployToEmulator(dependsOn: ':app:installDebug') {
+    group = "deployment"
+    description = "Installs the debug APK to the default emulator and launches the main activity."
+    doLast {
+        def launchIntent = "am start -n info.guardianproject.arti/.MainActivity"
+        exec {
+            commandLine "adb", "shell", launchIntent
+        }
+    }
 }
