@@ -3,6 +3,7 @@ plugins {
     id 'com.android.application' version '8.11.0' apply false
     id 'com.android.library' version '8.11.0' apply false
     id 'org.jetbrains.kotlin.android' version '2.2.0' apply false
+    id 'com.quittle.android-emulator' version '0.4.5' apply false
 }
 
 task clean(type: Delete) {
@@ -10,12 +11,8 @@ task clean(type: Delete) {
 }
 
 ext {
-    versionName = "1.1.0.1"
-    LIBRARY_GROUP = "info.guardianproject"
-    LIBRARY_ARTIFACT_ID = "arti-mobile-ex"
+    versionName = "0.0.1"
+    LIBRARY_GROUP = "wandsas"
+    LIBRARY_ARTIFACT_ID = "arti-messenger"
     LIBRARY_VERSION_NAME = versionName
-    LIBRARY_URL = "https://gitlab.com/guardianproject/arti-mobile-ex"
-    LIBRARY_GIT_URL = "https://gitlab.com/guardianproject/arti-mobile-ex.git"
-    OSS_SIGNING_KEY_ID = "nathan@guardianproject.info"
-    OSS_SIGNING_KEY = "0x123456"
 }

@@ -19,6 +19,6 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "arti-android"
-include ':sample'
+rootProject.name = "arti-messenger"
+include ':client'
 include ':arti'
