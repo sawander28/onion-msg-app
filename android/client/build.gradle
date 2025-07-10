@@ -7,7 +7,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "wandsas.client.arti"
+        applicationId "wandsas.arti.client"
         minSdk 21
         targetSdk 34
         versionCode 1
@@ -26,7 +26,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    namespace 'wandsas.client.arti'
+    namespace 'wandsas.arti.client'
 }
 
 dependencies {

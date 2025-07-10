@@ -1,5 +1,5 @@
 
-package wandsas.client.arti;
+package wandsas.arti.client;
 
 import android.app.Application;
 import android.content.Context;

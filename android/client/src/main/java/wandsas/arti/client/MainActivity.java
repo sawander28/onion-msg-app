@@ -1,5 +1,5 @@
 
-package wandsas.client.arti;
+package wandsas.arti.client;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import wandsas.client.arti.SelectedPluggableTransport;
 
 public class MainActivity extends AppCompatActivity {
 

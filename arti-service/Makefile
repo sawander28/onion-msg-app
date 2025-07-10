@@ -7,9 +7,9 @@ ANDROID_TARGETS := \
 	x86_64-linux-android
 FILENAME := libarti_messenger.a
 
-export ANDROID_NDK_HOME=${HOME}/android/ndk/android-ndk-r26d
-export TOOLCHAIN=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64
-export RANLIB=${TOOLCHAIN}/bin/llvm-ranlib
+ANDROID_NDK_HOME := ${HOME}/android/ndk/android-ndk-r26d
+TOOLCHAIN := ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64
+RANLIB := ${TOOLCHAIN}/bin/llvm-ranlib
 
 
 all: release

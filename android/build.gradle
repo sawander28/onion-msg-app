@@ -20,7 +20,7 @@ task deployToEmulator(dependsOn: ':app:installDebug') {
     group = "deployment"
     description = "Installs the debug APK to the default emulator and launches the main activity."
     doLast {
-        def launchIntent = "am start -n info.guardianproject.arti/.MainActivity"
+        def launchIntent = "am start -n wandsas.arti.client/.MainActivity"
         exec {
             commandLine "adb", "shell", launchIntent
         }
