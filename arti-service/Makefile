@@ -36,7 +36,7 @@ android-release-arm64: android-install-deps
 android-release-x86_64: android-install-deps
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t x86_64 -o ../android/arti/src/main/jniLibs build --release
 
-info_guardianproject_arti_ArtiJNI.h:
+wandsas_arti_ArtiJNI.h:
 	javac \
 		-h . \
 		-classpath ../android/arti/src/main/java/ \

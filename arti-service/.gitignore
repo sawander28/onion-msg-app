@@ -1,6 +1,4 @@
 jniLibs
 target
-ndk
-ndk.zip
 arti-mobile.h
-info_guardianproject_arti_ArtiJNI.h
+wandsas_arti_ArtiJNI.h
