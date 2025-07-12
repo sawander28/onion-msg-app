@@ -15,25 +15,18 @@ RANLIB := ${TOOLCHAIN}/bin/llvm-ranlib
 all: release
 release: android
 debug: android-debug
-
 android: android-release
 
-android-debug: android-install-deps
+android-debug: android-install-deps wandsas_arti_ArtiJNI.h
 	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ../android/arti/src/main/jniLibs build
 
-android-debug-x86: android-install-deps
-	cargo ndk -t x86 -o ../android/arti/src/main/jniLibs build
-
-android-debug-x86_64: android-install-deps
-	cargo ndk -t x86_64 -o ../android/arti/src/main/jniLibs build
-
-android-release: android-install-deps
+android-release: android-install-deps wandsas_arti_ArtiJNI.h
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ../android/arti/src/main/jniLibs build --release
 
-android-release-arm64: android-install-deps
+android-release-arm64: android-install-deps wandsas_arti_ArtiJNI.h
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t arm64-v8a -o ../android/arti/src/main/jniLibs build --release
 
-android-release-x86_64: android-install-deps
+android-release-x86_64: android-install-deps wandsas_arti_ArtiJNI.h
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t x86_64 -o ../android/arti/src/main/jniLibs build --release
 
 wandsas_arti_ArtiJNI.h:
@@ -42,7 +35,6 @@ wandsas_arti_ArtiJNI.h:
 		-classpath ../android/arti/src/main/java/ \
 		../android/arti/src/main/java/wandsas/arti/ArtiJNI.java
 	find ../android/arti/src/main/java -name "*.class" | xargs rm
-
 
 clean:
 	cargo clean
