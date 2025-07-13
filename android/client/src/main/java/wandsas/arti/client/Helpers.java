@@ -1,5 +1,5 @@
 
-package wandsas.client.arti;
+package wandsas.arti.client;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

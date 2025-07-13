@@ -1,5 +1,5 @@
 
-package wandsas.client.arti;
+package wandsas.arti.client;
 
 public enum TorConnectionStatus {
     TOR,
