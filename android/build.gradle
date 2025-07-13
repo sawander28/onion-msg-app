@@ -1,28 +1,19 @@
+
 plugins {
-    id 'com.android.application' version '8.2.2' apply false
-    id 'com.android.library' version '8.2.2' apply false
-    id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
+    id 'com.android.application' version '8.11.0' apply false
+    id 'com.android.library' version '8.11.0' apply false
+    id 'org.jetbrains.kotlin.android' version '2.1.20' apply false
     id 'com.quittle.android-emulator' version '0.4.5' apply false
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+
 }
 
 ext {
-    versionName = "0.0.1"
+    versionName = "0.1"
     LIBRARY_GROUP = "wandsas"
     LIBRARY_ARTIFACT_ID = "arti-messenger"
     LIBRARY_VERSION_NAME = versionName
-}
-
-task deployToEmulator(dependsOn: ':app:installDebug') {
-    group = "deployment"
-    description = "Installs the debug APK to the default emulator and launches the main activity."
-    doLast {
-        def launchIntent = "am start -n wandsas.arti.client/.MainActivity"
-        exec {
-            commandLine "adb", "shell", launchIntent
-        }
-    }
 }
