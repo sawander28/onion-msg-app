@@ -1,9 +1,7 @@
 current_dir := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 rust-installed-targets := $(shell rustup target list --installed)
 ANDROID_TARGETS := \
-	armv7-linux-androideabi \
 	aarch64-linux-android \
-	i686-linux-android \
 	x86_64-linux-android
 FILENAME := libarti_messenger.a
 
@@ -18,10 +16,10 @@ debug: android-debug
 android: android-release
 
 android-debug: android-install-deps wandsas_arti_ArtiJNI.h
-	cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ../android/arti/src/main/jniLibs build
+	cargo ndk -t arm64-v8a -t x86_64 -o ../android/arti/src/main/jniLibs build
 
 android-release: android-install-deps wandsas_arti_ArtiJNI.h
-	RUSTFLAGS='-C link-arg=-s' cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 -o ../android/arti/src/main/jniLibs build --release
+	RUSTFLAGS='-C link-arg=-s' cargo ndk -t arm64-v8a -t x86_64 -o ../android/arti/src/main/jniLibs build --release
 
 android-release-arm64: android-install-deps wandsas_arti_ArtiJNI.h
 	RUSTFLAGS='-C link-arg=-s' cargo ndk -t arm64-v8a -o ../android/arti/src/main/jniLibs build --release
@@ -48,11 +46,8 @@ clean-all: clean
 #android-install-deps: android-ndk-r26d cargo-ndk android-targets
 android-install-deps: cargo-ndk android-targets
 
-android-ndk-r26d: cache/ndk.zip
-	bsdunzip cache/ndk.zip -C cache
-
-cache/ndk.zip:
-	mkdir -p cache
+android-ndk-r26d:
+	sdkmanager "ndk;android-ndk-r26d"
 
 ifeq ($(OS),Windows_NT)
 	wget https://dl.google.com/android/repository/android-ndk-r26d-windows.zip -O $@
