@@ -5,7 +5,7 @@ ANDROID_TARGETS := \
 	x86_64-linux-android
 FILENAME := libarti_messenger.a
 
-ANDROID_NDK_HOME := ${HOME}/android/ndk/android-ndk-r26d
+ANDROID_NDK_HOME := ${HOME}/android/ndk/android-ndk-r27d
 TOOLCHAIN := ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64
 RANLIB := ${TOOLCHAIN}/bin/llvm-ranlib
 
