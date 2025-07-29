@@ -28,7 +28,7 @@ android {
     }
     
     publishing {
-        singleVariant("debug") {}
+        singleVariant("debug") {
         singleVariant("release") {}
         singleVariant("releaseUnitTest") {}        
     }
@@ -50,5 +50,5 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+    }
 }
-
